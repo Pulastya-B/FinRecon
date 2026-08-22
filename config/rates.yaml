@@ -1,0 +1,58 @@
+# ---------------------------------------------------------------------------
+# Settlement economics.
+#
+# IMPORTANT: every rate below is ILLUSTRATIVE and exists to make the synthetic
+# data structurally realistic. They are NOT sourced from any gateway's live
+# pricing card, and this project makes no compliance claim. In a real
+# deployment these would be read from the merchant's actual pricing agreement
+# and the applicable tax provisions of the period being reconciled.
+#
+# They are parameters, not constants, precisely so the engine can be tested
+# against a range of assumptions (see eval/sensitivity.py).
+# ---------------------------------------------------------------------------
+
+currency: INR
+
+# Merchant Discount Rate, in basis points (100 bps = 1.00%), by payment method.
+# Rates differ by method in reality; the spread matters more than the levels,
+# because it means a batch's blended fee is not recoverable from the gross
+# alone -- you need the method mix.
+mdr_bps:
+  card: 200
+  netbanking: 180
+  wallet: 200
+  upi: 0        # zero-MDR on UPI P2M is the structurally interesting case:
+                # it makes gross == net for those rows, which changes matching
+
+# Indirect tax charged on the MDR fee itself (not on the sale).
+tax_on_fee_bps: 1800
+
+# Withholding on gross, deducted by the gateway before payout.
+# Set enabled: false to model a merchant where this does not apply.
+withholding:
+  enabled: true
+  rate_bps: 100
+
+# Settlement timing.
+settlement:
+  # Business days between capture date and payout date.
+  lag_business_days: 2
+  # Capture cutoff. Payments after this belong to the next capture day's batch.
+  cutoff_hour: 23
+  # If a cycle's deductions exceed its gross, the shortfall is carried into the
+  # next cycle rather than producing a negative payout.
+  allow_carry_forward: true
+
+# Illustrative national holiday list. Real bank calendars vary by state and by
+# clearing system; this is deliberately a small stand-in and is one of the
+# documented threats to validity.
+holidays_2026:
+  - 2026-01-26
+  - 2026-03-04
+  - 2026-03-21
+  - 2026-04-14
+  - 2026-05-01
+  - 2026-08-15
+  - 2026-10-02
+  - 2026-11-09
+  - 2026-12-25

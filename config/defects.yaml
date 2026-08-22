@@ -1,0 +1,201 @@
+# ---------------------------------------------------------------------------
+# Defect injection.
+#
+# Reconciliation is only hard because the three ledgers disagree. This file
+# says HOW they are made to disagree, and WHY that disagreement occurs in
+# reality.
+#
+# The `mechanism` field is documentation, not executable config. It exists
+# because "6% of rows are missing their payment_id" invites the obvious and
+# correct objection -- payment IDs exist, that is the entire point of them.
+# Each defect below therefore names the concrete real-world process that
+# destroys the linkage, so the reader can judge whether the defect is
+# plausible rather than convenient.
+#
+# Rates are plausible mid-range assumptions, NOT measured industry figures.
+# They are swept in eval/sensitivity.py rather than defended as ground truth.
+# ---------------------------------------------------------------------------
+
+# ---- Order-side -----------------------------------------------------------
+
+order_never_paid:
+  rate: 0.040
+  mechanism: >
+    Checkout abandoned after the order record was written but before payment
+    was captured. Order exists in the merchant ERP with no counterpart
+    anywhere else. Detectable ONLY in a three-way reconciliation -- invisible
+    if you only match gateway against bank.
+  expected_outcome: ORDER_UNPAID
+
+order_amount_typo:
+  rate: 0.010
+  mechanism: >
+    Manual order entry (phone/offline sale keyed into the ERP). The merchant's
+    own "source of truth" carries the error, not the gateway. Breaks the
+    assumption that the order ledger is authoritative.
+  expected_outcome: AMOUNT_VARIANCE_UNEXPLAINED
+
+# ---- Gateway-side ---------------------------------------------------------
+
+duplicate_capture:
+  rate: 0.030
+  mechanism: >
+    Customer's first attempt appeared to fail at the client (timeout, closed
+    tab) so they retried; both attempts were captured. Two distinct payment
+    IDs against one order. Trivially FOUND by GROUP BY order_id -- the
+    difficulty is deciding which capture is the real sale, whether one was
+    already refunded, and whether the batch still balances.
+  expected_outcome: DUPLICATE_PAYMENT
+
+partial_refund:
+  rate: 0.080
+  mechanism: >
+    Partial return or goodwill adjustment. The refund carries its payment_id,
+    so the PAIRING is unambiguous -- but the refund is deducted from whichever
+    settlement cycle processes it, which may be days or weeks after the
+    original capture. Period attribution, not identity, is the hard part.
+  expected_outcome: MATCHED   # recoverable; tests cross-period attribution
+
+full_refund:
+  rate: 0.025
+  mechanism: >
+    Full return. Same cross-period attribution problem as partial_refund, plus
+    it can drive a small cycle's net payout negative and trigger carry-forward.
+  expected_outcome: MATCHED
+
+chargeback:
+  rate: 0.012
+  mechanism: >
+    Customer disputed with their issuer. The gateway debits the merchant on
+    dispute receipt, frequently BEFORE the merchant has recorded the dispute
+    anywhere. The batch is short by an amount with no counterpart in the
+    merchant's books at reconciliation time.
+  expected_outcome: CHARGEBACK_UNPOSTED
+
+# ---- Bank-side ------------------------------------------------------------
+
+narration_truncated:
+  rate: 0.300
+  mechanism: >
+    Bank statement exports clip the narration field to a fixed width (35 chars
+    is common in NEFT/RTGS descriptors). The UTR is often the casualty. The
+    money is correct and the settlement is real -- only the machine-readable
+    handle is gone. RECOVERABLE via amount + date + batch arithmetic, which is
+    exactly what Tier 2/3 exist to prove.
+  expected_outcome: MATCHED
+
+settlement_late_posting:
+  rate: 0.050
+  mechanism: >
+    Inter-bank clearing delay pushes the credit past the expected T+N date.
+    The batch is not broken, it has not arrived yet. A system that cannot tell
+    "late" from "missing" generates false exceptions every single morning.
+  expected_outcome: MATCHED
+
+settlement_missing_in_bank:
+  rate: 0.020
+  mechanism: >
+    Payout initiated and reported settled by the gateway, but no corresponding
+    bank credit exists within any reasonable window. This is the case that is
+    genuinely worth money -- it means the gateway owes the merchant and nobody
+    has noticed.
+  expected_outcome: MISSING_IN_BANK
+
+direct_bank_credit:
+  rate: 0.020
+  mechanism: >
+    Customer paid by direct NEFT/RTGS to the merchant's account, bypassing the
+    gateway entirely. Money arrives with NO payment_id, because no payment
+    object was ever created. Cannot be solved by "trace the transaction ID" --
+    there is no transaction ID to trace.
+  expected_outcome: MISSING_IN_GATEWAY
+
+rounding_drift:
+  rate: 0.015
+  mechanism: >
+    Sub-paise fee arithmetic rounded differently by gateway and bank, leaving
+    a 1-2 paise gap on a batch. Individually trivial, but it defeats strict
+    equality matching, which is why Tier 3 balances within a tolerance band
+    instead of on exact equality.
+  expected_outcome: MATCHED
+
+# ---- Report-vs-bank divergence --------------------------------------------
+#
+# The defects above damage a report. These three damage the AGREEMENT between
+# the gateway's settlement report and the money the bank actually moved: every
+# gateway CSV stays internally consistent, and the payout is short. That is the
+# only shape a variance can take here, because eval/validate.py recomputes
+# every settlement column from the payment, refund and chargeback ledgers -- so
+# a report that disagreed with itself would be a broken dataset, not a defect.
+#
+# At most ONE of these per settlement cycle. Two shortfalls in one batch sum to
+# a single delta with two explanations, which is genuinely ambiguous and worth
+# modelling later, but not while L1-L4 are being exercised for the first time.
+
+refund_wrong_cycle:
+  rate: 0.080
+  mechanism: >
+    A refund processed at a cycle boundary, or re-processed after an initial
+    failure, is netted out of one payout while the report books it against
+    another. Every ledger balances; the batch is simply short by exactly one
+    refund amount, and that refund's own settlement_id points at a different
+    cycle. Resolvable, because the refund row still exists to be found.
+  expected_outcome: AMOUNT_VARIANCE_UNEXPLAINED
+
+chargeback_silent_deduction:
+  rate: 0.040
+  mechanism: >
+    Dispute raised directly with the issuer. The gateway debits the merchant on
+    receipt, and the merchant's export predates the record appearing, so the
+    payout is short by an amount with NO counterpart anywhere in the gateway
+    ledger. Nothing can be matched against it -- which is itself the diagnosis,
+    and why the expected outcome is an exception rather than an attribution.
+  expected_outcome: CHARGEBACK_UNPOSTED
+
+payment_missing_from_report:
+  rate: 0.060
+  mechanism: >
+    A paginated settlement export drops a capture onto the wrong page, so the
+    report books the payment against a different cycle from the payout its
+    money actually left. The batch's computed gross is short by that payment's
+    net contribution. Resolvable, because the payment row still exists to be
+    found in another cycle.
+  expected_outcome: AMOUNT_VARIANCE_UNEXPLAINED
+
+chargeback_wrong_cycle:
+  # 0.080, not the 0.030 first tried. At 0.030 across 46 settlement cycles the
+  # expected yield is 1.3 events and the draw came up empty on seed 42 -- a 1
+  # in 4 outcome, which left L3 with nothing to find and no way to tell a dead
+  # rule from an unlucky sample. Matched instead to refund_wrong_cycle, which
+  # it is the exact analogue of: two defects with the same shape and the same
+  # resolvability are harder to defend at different rates than at one.
+  rate: 0.080
+  mechanism: >
+    A dispute is debited from the payout on receipt but booked against the
+    cycle in which it was later confirmed, which is rarely the same one. The
+    row is PRESENT in gateway_chargebacks.csv -- its settlement_id simply
+    points at a different cycle from the one whose net it left. Resolvable,
+    and deliberately so: it is the counterpart to chargeback_silent_deduction,
+    where the row does not exist at all. Having both is the point. One shows
+    the engine can name a dispute it can see; the other shows it declines to
+    name one it cannot.
+  expected_outcome: CHARGEBACK_UNPOSTED
+
+compound_shortfall:
+  # 0.080, not the 0.025 first tried. At 0.025 across 46 settlement cycles the
+  # expected yield is 1.15 events and the draw came up empty on seed 42 -- a
+  # 31% outcome, which would have left the pair search with nothing to find and
+  # no way to tell a dead rule from an unlucky sample. Matched to
+  # refund_wrong_cycle and chargeback_wrong_cycle, the other resolvable
+  # report-vs-bank divergences, which sit at the same rate.
+  rate: 0.080
+  mechanism: >
+    Two independent shortfalls land on the same settlement cycle -- for example
+    a refund booked to the wrong cycle AND a payment missing from the report.
+    Realistic: a payout covering ~21 payments over a busy week can easily carry
+    more than one defect. The batch is short by the SUM of two items, so no
+    single ledger entry explains it and attribution must consider pairs. This
+    is the only defect that deliberately breaks the one-defect-per-batch rule
+    the others keep, and it exists because a search path that never fires is
+    untested code wearing a passing badge.
+  expected_outcome: AMOUNT_VARIANCE_UNEXPLAINED
