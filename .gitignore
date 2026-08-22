@@ -1,0 +1,33 @@
+# Secrets. The Mistral key lives in .env and must never reach a commit --
+# a key in git history stays there after deletion and has to be rotated.
+.env
+.env.*
+!.env.example
+
+# Frontend dependencies. web/dist IS committed -- it is the deployable
+# artifact and the reason the service is one process rather than two.
+web/node_modules/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Generator scratch. tests/test_invariants.py writes this on every run and
+# never cleans it up; it is a byte-comparison target, not data.
+data/_determinism_check/
+
+# Seed 99's explanation cache. The pipeline was run against seed 99 once on
+# 23 Aug to generate template prose, before the held-out discipline was
+# tightened. Those files carry seed 99's real exception groups, the service
+# refuses to serve seed 99 anyway, and publishing them would sit badly beside
+# a README that calls seed 99 unscored. Kept locally, excluded here.
+cache/explanations/seed99/
+
+# NOT ignored, deliberately:
+#   cache/explanations/   committed on purpose, so the hosted demo makes zero
+#                         API calls -- no quota burn, no rate limit mid-review
+#   data/seed42/          the development dataset is the artefact
+#   data/seed99/          the held-out dataset must ship to be checkable
