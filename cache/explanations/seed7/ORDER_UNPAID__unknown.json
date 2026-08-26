@@ -1,0 +1,10 @@
+{
+  "group_id": "ORDER_UNPAID__unknown",
+  "code": "ORDER_UNPAID",
+  "record_hash": "a25ebc5c27bf6bafcbe188e3018ba689",
+  "prose": "40 orders worth \u20b94,21,555.42 have no payment in the gateway or the bank.\nThe order was written to the merchant's system but checkout was never completed. Only a three-way reconciliation surfaces these -- comparing gateway against bank alone cannot see an order that produced no payment.\nSuggested action: check the checkout log for these orders and close the ones where payment was never attempted.",
+  "source": "template",
+  "provider": "null",
+  "rejected_tokens": [],
+  "generated_at": "2026-08-25T13:35:26"
+}

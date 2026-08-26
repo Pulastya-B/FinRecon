@@ -1,0 +1,10 @@
+{
+  "group_id": "AMOUNT_VARIANCE_UNEXPLAINED__setl_20260811_038",
+  "code": "AMOUNT_VARIANCE_UNEXPLAINED",
+  "record_hash": "527af776470e69aae40546e72f6a46f5",
+  "prose": "Payout of 11 August is short \u20b92,194.24.\nThe bank credited \u20b92,07,131.69 against an expected \u20b92,09,325.93. 21 orders sit in this payout. No refund, chargeback or payment in the gateway ledger accounts for the difference, so the cause is not yet identified.\nSuggested action: request the gateway's own breakdown for this payout, and check for a dispute debited but not yet reported.",
+  "source": "template",
+  "provider": "null",
+  "rejected_tokens": [],
+  "generated_at": "2026-08-25T13:35:29"
+}

@@ -1,0 +1,10 @@
+{
+  "group_id": "CHARGEBACK_UNPOSTED__unknown",
+  "code": "CHARGEBACK_UNPOSTED",
+  "record_hash": "a689778a400785e2bdb56b3e6c300245",
+  "prose": "10 orders carry a gateway dispute the merchant's books have not recorded, worth \u20b982,394.95.\nThe gateway debits a disputed amount when the dispute is raised, often before the merchant has recorded it anywhere. The money has already moved; what is missing is the merchant's own record of it.\nSuggested action: post these disputes to the books and confirm each gateway debit against the payout it was taken from.",
+  "source": "template",
+  "provider": "null",
+  "rejected_tokens": [],
+  "generated_at": "2026-08-25T13:35:26"
+}

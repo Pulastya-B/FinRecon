@@ -1,0 +1,10 @@
+{
+  "group_id": "AMOUNT_VARIANCE_UNEXPLAINED__unknown",
+  "code": "AMOUNT_VARIANCE_UNEXPLAINED",
+  "record_hash": "71db58823961870d94fa0acb0dbd2ccc",
+  "prose": "13 orders record a different value from the amount actually captured, \u20b988,171.72 in total.\nThe order ledger and the gateway disagree about the money. Usually manual keying in the order system rather than a gateway fault, but which side is wrong has to be established per order.\nSuggested action: compare each order's recorded value against the captured amount and establish which side is wrong before correcting.",
+  "source": "template",
+  "provider": "null",
+  "rejected_tokens": [],
+  "generated_at": "2026-08-25T13:35:26"
+}

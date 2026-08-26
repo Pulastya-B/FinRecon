@@ -1,0 +1,10 @@
+{
+  "group_id": "DUPLICATE_PAYMENT__unknown",
+  "code": "DUPLICATE_PAYMENT",
+  "record_hash": "49684c9b86648822f91a559425d2d51c",
+  "prose": "26 orders were captured twice, worth \u20b96,03,314.42 across both captures.\nEach order has two payment IDs. Typically the customer's first attempt appeared to fail at the browser so they retried, and both succeeded. Finding them is a lookup; deciding which capture is the real sale is the work.\nSuggested action: decide which capture is the real sale, refund the other, and confirm the settlement batch still balances afterwards.",
+  "source": "template",
+  "provider": "null",
+  "rejected_tokens": [],
+  "generated_at": "2026-08-25T13:35:26"
+}

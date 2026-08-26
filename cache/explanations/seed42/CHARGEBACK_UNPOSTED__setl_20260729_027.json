@@ -1,0 +1,10 @@
+{
+  "group_id": "CHARGEBACK_UNPOSTED__setl_20260729_027",
+  "code": "CHARGEBACK_UNPOSTED",
+  "record_hash": "fd106057bd93a7d10f66a8317f392e59",
+  "prose": "Payout of 29 July is short \u20b912,378.00.\nThe bank credited \u20b95,23,540.78 against an expected \u20b95,35,918.78. 22 orders sit in this payout. No refund, chargeback or payment in the gateway ledger accounts for the difference, so the cause is not yet identified.\nSuggested action: request the gateway's own breakdown for this payout, and check for a dispute debited but not yet reported.",
+  "source": "template",
+  "provider": "null",
+  "rejected_tokens": [],
+  "generated_at": "2026-08-25T13:35:23"
+}

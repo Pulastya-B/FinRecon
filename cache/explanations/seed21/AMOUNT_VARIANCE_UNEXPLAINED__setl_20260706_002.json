@@ -1,0 +1,10 @@
+{
+  "group_id": "AMOUNT_VARIANCE_UNEXPLAINED__setl_20260706_002",
+  "code": "AMOUNT_VARIANCE_UNEXPLAINED",
+  "record_hash": "b5e1524ed4087442d87c6c2c531c525b",
+  "prose": "Payout of 6 July is short \u20b98,278.37.\nThe bank credited \u20b978,182.92 against an expected \u20b986,461.29. 20 orders sit in this payout. This is consistent with payment pay_000248 of \u20b98,361.99, which the settlement report books to a different cycle from the payout its money left.\nSuggested action: check whether pay_000248 appears in this payout's settlement report. The amounts match, which is not proof of cause -- pay_000248 is booked to another cycle, so the link is not confirmed.",
+  "source": "template",
+  "provider": "null",
+  "rejected_tokens": [],
+  "generated_at": "2026-08-25T13:35:32"
+}

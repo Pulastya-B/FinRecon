@@ -1,0 +1,10 @@
+{
+  "group_id": "MISSING_IN_BANK__setl_20260708_005",
+  "code": "MISSING_IN_BANK",
+  "record_hash": "c7bce17518be0ea5ae8d7a190f8200c5",
+  "prose": "Payout setl_20260708_005 of 8 July has not arrived.\nThe gateway reported a payout of \u20b91,31,418.64, and no bank credit matching it has been found within the expected clearing window. 21 orders are waiting on this payout.\nSuggested action: confirm with the gateway whether the payout was released, and check the bank statement beyond the expected window.",
+  "source": "template",
+  "provider": "null",
+  "rejected_tokens": [],
+  "generated_at": "2026-08-25T13:35:29"
+}

@@ -1,0 +1,10 @@
+{
+  "group_id": "CHARGEBACK_UNPOSTED__setl_20260813_042",
+  "code": "CHARGEBACK_UNPOSTED",
+  "record_hash": "0779f64007281e2f2e180637bdddea8a",
+  "prose": "Payout of 13 August is short \u20b91,801.00.\nThe bank credited \u20b91,85,196.21 against an expected \u20b91,86,997.21. 17 orders sit in this payout. This is consistent with chargeback cb_00004 of \u20b91,801.00, raised 11 August. The gateway debits a disputed amount when it receives the dispute, but books it against the cycle in which the dispute is later confirmed, so the two can fall in different payouts.\nSuggested action: confirm chargeback cb_00004 against this payout and record the dispute in the books. The amounts match, which is not proof of cause -- cb_00004 is booked to another cycle, so the link is not confirmed.",
+  "source": "template",
+  "provider": "null",
+  "rejected_tokens": [],
+  "generated_at": "2026-08-25T13:35:32"
+}
