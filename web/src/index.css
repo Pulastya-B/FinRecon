@@ -1,0 +1,284 @@
+/* --------------------------------------------------------------------------
+   Inter, self-hosted, four weights, latin subset.
+
+   The files sit in src/fonts/ and are vendored rather than pulled from
+   node_modules: web/node_modules is gitignored while web/dist is committed, so
+   vendoring keeps the source of the deployed artifact in the repo alongside it.
+   Vite fingerprints these and emits them into dist/assets, which is the whole
+   point -- fonts.googleapis.com being unreachable on the day a judge opens this
+   must not change how it looks.
+
+   font-display: swap. A hosted demo that paints nothing for three seconds
+   because a 24KB font is slow has traded a real failure for a cosmetic one.
+   -------------------------------------------------------------------------- */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./fonts/inter-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('./fonts/inter-latin-500-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('./fonts/inter-latin-600-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./fonts/inter-latin-700-normal.woff2') format('woff2');
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* --------------------------------------------------------------------------
+   The neutral ramp.
+
+   Ten steps, not three. Three greys cannot express hierarchy: everything that
+   was not black was one grey, so a section divider, a disabled control and a
+   secondary label all read at the same distance from the page and nothing
+   receded. The ramp is the difference between a table with structure and a
+   table with lines on it.
+
+   Declared as custom properties as well as Tailwind tokens so the handful of
+   rules below that cannot be expressed as utilities draw from the same values.
+   -------------------------------------------------------------------------- */
+:root {
+  --n-0:   #FFFFFF;   /* page */
+  --n-25:  #FCFCFD;   /* panel tint, alternating rows */
+  --n-50:  #F7F8FA;   /* section headers, hover */
+  --n-100: #EFF1F5;   /* dividers inside panels */
+  --n-200: #E3E6EC;   /* borders */
+  --n-300: #CBD0DA;   /* disabled */
+  --n-500: #6B7280;   /* secondary text */
+  --n-600: #4B5563;   /* labels */
+  --n-800: #1F2430;   /* body text */
+  --n-900: #0F1420;   /* headings, primary figures */
+
+  --accent:    #0B66EF;
+  --accent-bg: #EEF4FE;
+  --danger:    #D93025;
+  --warn:      #B26A00;
+}
+
+html, body, #root { height: 100%; }
+
+body {
+  background: var(--n-0);
+  color: var(--n-800);
+
+  /* cv05 gives the lowercase l a tail, which stops it colliding with 1 and I
+     in an interface full of ids; ss01 is Inter's alternate digit set. tnum is
+     set globally AND on .tnum -- globally so nothing in a table can drift by
+     forgetting it, explicitly on money so the intent survives a refactor. */
+  font-feature-settings: 'tnum' 1, 'cv05' 1, 'ss01' 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Every monetary figure aligns on the decimal. Inter does NOT default to
+   tabular figures, and a settlement column whose digits drift is unreadable at
+   a glance -- which is the one thing this interface exists to be. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1, 'cv05' 1, 'ss01' 1;
+}
+
+/* --------------------------------------------------------------------------
+   Surfaces and elevation.
+
+   The screen read flat because every plane was the same plane: white content
+   on a white page, separated by hairlines. Depth here is not decoration, it is
+   the thing that tells a reader which objects are containers and which are
+   content -- and a shadow does that with less ink than another border.
+
+   Three levels and no more. The page recedes, panels sit on it, and the detail
+   pane sits above the panel it explains. Anything that needs a fourth level is
+   a layout that has not been decided.
+   -------------------------------------------------------------------------- */
+.app-bg {
+  background:
+    radial-gradient(1200px 400px at 20% -10%, rgba(11, 102, 239, 0.035), transparent 70%),
+    var(--n-50);
+}
+
+.panel {
+  background: var(--n-0);
+  border: 1px solid var(--n-200);
+  border-radius: 6px;
+  box-shadow:
+    0 1px 2px rgba(15, 20, 32, 0.04),
+    0 1px 1px rgba(15, 20, 32, 0.03);
+}
+
+.panel-flush {
+  background: var(--n-0);
+  border: 1px solid var(--n-200);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+/* The detail pane. One step above the table it explains, and the only thing on
+   the screen that makes that claim. */
+.pane-raised {
+  background: var(--n-0);
+  border: 1px solid var(--n-200);
+  border-radius: 6px;
+  box-shadow:
+    0 1px 2px rgba(15, 20, 32, 0.05),
+    0 6px 16px -6px rgba(15, 20, 32, 0.10),
+    0 12px 32px -12px rgba(15, 20, 32, 0.08);
+}
+
+/* The wordmark. A pressed-in look rather than a bigger font: one light edge
+   below and one dark edge above is what reads as cut into the surface, and it
+   holds the eye without shouting at it. */
+.wordmark {
+  color: var(--n-900);
+  letter-spacing: -0.035em;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9),
+    0 -1px 0 rgba(15, 20, 32, 0.06);
+}
+
+.mark-tile {
+  background: linear-gradient(180deg, #2C7BF2 0%, var(--accent) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 1px 2px rgba(11, 102, 239, 0.35);
+}
+
+/* Rows lift very slightly on hover. 90ms, background only -- a table that
+   animates its geometry on hover is a table you cannot read while moving
+   through it. */
+.row-i {
+  transition: background-color 90ms ease-out;
+}
+
+.nav-item {
+  transition: background-color 90ms ease-out, color 90ms ease-out;
+}
+
+/* --------------------------------------------------------------------------
+   Tooltips.
+
+   The anchor only. The bubble itself is positioned in JS and rendered at the
+   end of <body> -- see Tip in App.jsx.
+
+   The previous version was a CSS ::after on the header, and it was broken in
+   the way that is easy to miss when you write it and obvious the moment you
+   hover: absolutely positioned inside a table inside the queue's
+   `overflow-y-auto` pane, so the bubble was clipped by the scroll container,
+   and RUPEES -- the leftmost column, opening leftward to stay in its own
+   column -- put its bubble underneath the sidebar. A tooltip whose whole job is
+   explaining a term a judge does not know is worse than absent when it is half
+   readable.
+
+   Not the title attribute either: it waits about a second, cannot be styled,
+   and truncates the EVIDENCE text. Nobody hovers twice to find out.
+   -------------------------------------------------------------------------- */
+.tip {
+  cursor: help;
+  /* The only affordance. A dotted underline reads as "there is more here"
+     without adding a second colour to a header row that is already quiet. */
+  border-bottom: 1px dotted var(--n-300);
+}
+
+.tip-bubble {
+  position: fixed;
+  z-index: 200;
+  max-width: 290px;
+  padding: 10px 12px;
+
+  background: var(--n-900);
+  color: var(--n-0);
+  border-radius: 6px;
+  box-shadow: 0 6px 16px rgba(15, 20, 32, 0.22);
+
+  /* Sentence case at a readable size. These are explanations, not labels, and
+     inheriting a header's 11px uppercase would make them unreadable. */
+  font-size: 12.5px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0;
+  text-transform: none;
+  text-align: left;
+  white-space: normal;
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   The tolerance slider.
+
+   Styled by hand in both vendor dialects rather than pulled from a component
+   library. A native range input already has keyboard handling, arrow-key
+   stepping and a screen-reader contract; the only thing wrong with it is that
+   the default chrome does not belong next to this table.
+   -------------------------------------------------------------------------- */
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 20px;
+  background: transparent;
+  cursor: pointer;
+}
+.slider::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--n-200);
+}
+.slider::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--n-200);
+}
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  margin-top: -6px;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--n-0);
+  box-shadow: 0 1px 3px rgba(11, 102, 239, 0.4);
+}
+.slider::-moz-range-thumb {
+  height: 16px;
+  width: 16px;
+  border: 2px solid var(--n-0);
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 1px 3px rgba(11, 102, 239, 0.4);
+}
+.slider:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* The queue scrolls its own body under a header that stays put. Sticky cells
+   need their own background or the rows show through them. */
+/* Each section is its own table with its own header, so the column names sit
+   UNDER the section they belong to rather than floating above both of them.
+   Sticky is per-table: a header pins while its own section is on screen and
+   releases when the next one arrives. */
+.sticky-head th {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--n-50);
+  box-shadow: inset 0 -1px 0 var(--n-200);
+}
