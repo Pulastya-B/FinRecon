@@ -1,0 +1,2196 @@
+{
+  "generated_at": "2026-08-29T12:05:15+00:00",
+  "cross_seed": {
+    "source": "eval/sweep_results.csv",
+    "seeds": 30,
+    "seed_from": 200,
+    "seed_to": 229,
+    "crashed": 0,
+    "validated": 30,
+    "metrics": [
+      {
+        "key": "coverage",
+        "label": "Coverage",
+        "blurb": "Orders the engine tied all the way through.",
+        "n": 30,
+        "min": 0.473,
+        "max": 0.795,
+        "mean": 0.6425666666666667,
+        "sd": 0.07149857030427641,
+        "worst_seed": 205,
+        "constant": false
+      },
+      {
+        "key": "precision",
+        "label": "Precision",
+        "blurb": "Of the matches it claimed, how many were right.",
+        "n": 30,
+        "min": 1.0,
+        "max": 1.0,
+        "mean": 1.0,
+        "sd": 0.0,
+        "worst_seed": null,
+        "constant": true
+      },
+      {
+        "key": "recall",
+        "label": "Recall",
+        "blurb": "Of the matchable orders, how many it found.",
+        "n": 30,
+        "min": 1.0,
+        "max": 1.0,
+        "mean": 1.0,
+        "sd": 0.0,
+        "worst_seed": null,
+        "constant": true
+      },
+      {
+        "key": "exception_accuracy",
+        "label": "Exception accuracy",
+        "blurb": "Of the exceptions it raised, how many carried the right code.",
+        "n": 30,
+        "min": 0.6857142857142857,
+        "max": 1.0,
+        "mean": 0.885569772811499,
+        "sd": 0.0836906126543091,
+        "worst_seed": 218,
+        "constant": false
+      },
+      {
+        "key": "attribution_accuracy",
+        "label": "Attribution accuracy",
+        "blurb": "Of the causes it named, how many were the real one.",
+        "n": 30,
+        "min": 0.7777777777777778,
+        "max": 1.0,
+        "mean": 0.9925925925925926,
+        "sd": 0.0398901096824778,
+        "worst_seed": 206,
+        "constant": false
+      }
+    ]
+  },
+  "tolerance": {
+    "knob": "Tier 2 amount band (the tolerant tier)",
+    "shipped_label": "2 paise + 1 paise per payment",
+    "shipped_example": "28 paise on a 26-payment batch",
+    "shipped_note": "The sweep sets a FLAT band; the shipped band is fee-adjusted and sits between 2 and roughly 30 paise depending on batch size.",
+    "grid": [
+      2,
+      3,
+      4,
+      5,
+      7,
+      10,
+      14,
+      20,
+      28,
+      40,
+      55,
+      75,
+      100,
+      140,
+      200,
+      280,
+      400,
+      550,
+      750,
+      1000,
+      1400,
+      2000,
+      2800,
+      4000,
+      5500,
+      7500,
+      10000,
+      14000,
+      20000,
+      28000,
+      40000,
+      55000,
+      75000,
+      100000
+    ],
+    "seeds": [
+      {
+        "seed": "seed42",
+        "points": [
+          {
+            "paise": 2,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 3,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 4,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 5,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 7,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 10,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 14,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 20,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 28,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 40,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 55,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 75,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 100,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 140,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 200,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 280,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 400,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 550,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 750,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 1000,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 1400,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 2000,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 2800,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 4000,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 5500,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 7500,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 10000,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 14000,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 20000,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 28000,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 40000,
+            "coverage": 0.667,
+            "precision": 1.0,
+            "matches": 667,
+            "wrong": 0,
+            "exceptions": 333
+          },
+          {
+            "paise": 55000,
+            "coverage": 0.688,
+            "precision": 0.9694767441860465,
+            "matches": 688,
+            "wrong": 21,
+            "exceptions": 312
+          },
+          {
+            "paise": 75000,
+            "coverage": 0.752,
+            "precision": 0.886968085106383,
+            "matches": 752,
+            "wrong": 85,
+            "exceptions": 248
+          },
+          {
+            "paise": 100000,
+            "coverage": 0.752,
+            "precision": 0.886968085106383,
+            "matches": 752,
+            "wrong": 85,
+            "exceptions": 248
+          }
+        ]
+      },
+      {
+        "seed": "seed7",
+        "points": [
+          {
+            "paise": 2,
+            "coverage": 0.57,
+            "precision": 1.0,
+            "matches": 570,
+            "wrong": 0,
+            "exceptions": 430
+          },
+          {
+            "paise": 3,
+            "coverage": 0.57,
+            "precision": 1.0,
+            "matches": 570,
+            "wrong": 0,
+            "exceptions": 430
+          },
+          {
+            "paise": 4,
+            "coverage": 0.57,
+            "precision": 1.0,
+            "matches": 570,
+            "wrong": 0,
+            "exceptions": 430
+          },
+          {
+            "paise": 5,
+            "coverage": 0.57,
+            "precision": 1.0,
+            "matches": 570,
+            "wrong": 0,
+            "exceptions": 430
+          },
+          {
+            "paise": 7,
+            "coverage": 0.57,
+            "precision": 1.0,
+            "matches": 570,
+            "wrong": 0,
+            "exceptions": 430
+          },
+          {
+            "paise": 10,
+            "coverage": 0.57,
+            "precision": 1.0,
+            "matches": 570,
+            "wrong": 0,
+            "exceptions": 430
+          },
+          {
+            "paise": 14,
+            "coverage": 0.57,
+            "precision": 1.0,
+            "matches": 570,
+            "wrong": 0,
+            "exceptions": 430
+          },
+          {
+            "paise": 20,
+            "coverage": 0.57,
+            "precision": 1.0,
+            "matches": 570,
+            "wrong": 0,
+            "exceptions": 430
+          },
+          {
+            "paise": 28,
+            "coverage": 0.57,
+            "precision": 1.0,
+            "matches": 570,
+            "wrong": 0,
+            "exceptions": 430
+          },
+          {
+            "paise": 40,
+            "coverage": 0.57,
+            "precision": 1.0,
+            "matches": 570,
+            "wrong": 0,
+            "exceptions": 430
+          },
+          {
+            "paise": 55,
+            "coverage": 0.57,
+            "precision": 1.0,
+            "matches": 570,
+            "wrong": 0,
+            "exceptions": 430
+          },
+          {
+            "paise": 75,
+            "coverage": 0.57,
+            "precision": 1.0,
+            "matches": 570,
+            "wrong": 0,
+            "exceptions": 430
+          },
+          {
+            "paise": 100,
+            "coverage": 0.57,
+            "precision": 1.0,
+            "matches": 570,
+            "wrong": 0,
+            "exceptions": 430
+          },
+          {
+            "paise": 140,
+            "coverage": 0.57,
+            "precision": 1.0,
+            "matches": 570,
+            "wrong": 0,
+            "exceptions": 430
+          },
+          {
+            "paise": 200,
+            "coverage": 0.57,
+            "precision": 1.0,
+            "matches": 570,
+            "wrong": 0,
+            "exceptions": 430
+          },
+          {
+            "paise": 280,
+            "coverage": 0.57,
+            "precision": 1.0,
+            "matches": 570,
+            "wrong": 0,
+            "exceptions": 430
+          },
+          {
+            "paise": 400,
+            "coverage": 0.57,
+            "precision": 1.0,
+            "matches": 570,
+            "wrong": 0,
+            "exceptions": 430
+          },
+          {
+            "paise": 550,
+            "coverage": 0.57,
+            "precision": 1.0,
+            "matches": 570,
+            "wrong": 0,
+            "exceptions": 430
+          },
+          {
+            "paise": 750,
+            "coverage": 0.57,
+            "precision": 1.0,
+            "matches": 570,
+            "wrong": 0,
+            "exceptions": 430
+          },
+          {
+            "paise": 1000,
+            "coverage": 0.57,
+            "precision": 1.0,
+            "matches": 570,
+            "wrong": 0,
+            "exceptions": 430
+          },
+          {
+            "paise": 1400,
+            "coverage": 0.57,
+            "precision": 1.0,
+            "matches": 570,
+            "wrong": 0,
+            "exceptions": 430
+          },
+          {
+            "paise": 2000,
+            "coverage": 0.57,
+            "precision": 1.0,
+            "matches": 570,
+            "wrong": 0,
+            "exceptions": 430
+          },
+          {
+            "paise": 2800,
+            "coverage": 0.57,
+            "precision": 1.0,
+            "matches": 570,
+            "wrong": 0,
+            "exceptions": 430
+          },
+          {
+            "paise": 4000,
+            "coverage": 0.57,
+            "precision": 1.0,
+            "matches": 570,
+            "wrong": 0,
+            "exceptions": 430
+          },
+          {
+            "paise": 5500,
+            "coverage": 0.57,
+            "precision": 1.0,
+            "matches": 570,
+            "wrong": 0,
+            "exceptions": 430
+          },
+          {
+            "paise": 7500,
+            "coverage": 0.57,
+            "precision": 1.0,
+            "matches": 570,
+            "wrong": 0,
+            "exceptions": 430
+          },
+          {
+            "paise": 10000,
+            "coverage": 0.57,
+            "precision": 1.0,
+            "matches": 570,
+            "wrong": 0,
+            "exceptions": 430
+          },
+          {
+            "paise": 14000,
+            "coverage": 0.57,
+            "precision": 1.0,
+            "matches": 570,
+            "wrong": 0,
+            "exceptions": 430
+          },
+          {
+            "paise": 20000,
+            "coverage": 0.57,
+            "precision": 1.0,
+            "matches": 570,
+            "wrong": 0,
+            "exceptions": 430
+          },
+          {
+            "paise": 28000,
+            "coverage": 0.57,
+            "precision": 1.0,
+            "matches": 570,
+            "wrong": 0,
+            "exceptions": 430
+          },
+          {
+            "paise": 40000,
+            "coverage": 0.586,
+            "precision": 0.9726962457337884,
+            "matches": 586,
+            "wrong": 16,
+            "exceptions": 414
+          },
+          {
+            "paise": 55000,
+            "coverage": 0.586,
+            "precision": 0.9726962457337884,
+            "matches": 586,
+            "wrong": 16,
+            "exceptions": 414
+          },
+          {
+            "paise": 75000,
+            "coverage": 0.602,
+            "precision": 0.946843853820598,
+            "matches": 602,
+            "wrong": 32,
+            "exceptions": 398
+          },
+          {
+            "paise": 100000,
+            "coverage": 0.621,
+            "precision": 0.9178743961352657,
+            "matches": 621,
+            "wrong": 51,
+            "exceptions": 379
+          }
+        ]
+      },
+      {
+        "seed": "seed13",
+        "points": [
+          {
+            "paise": 2,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 3,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 4,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 5,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 7,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 10,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 14,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 20,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 28,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 40,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 55,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 75,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 100,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 140,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 200,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 280,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 400,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 550,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 750,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 1000,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 1400,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 2000,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 2800,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 4000,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 5500,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 7500,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 10000,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 14000,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 20000,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 28000,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 40000,
+            "coverage": 0.617,
+            "precision": 1.0,
+            "matches": 617,
+            "wrong": 0,
+            "exceptions": 383
+          },
+          {
+            "paise": 55000,
+            "coverage": 0.654,
+            "precision": 0.9434250764525994,
+            "matches": 654,
+            "wrong": 37,
+            "exceptions": 346
+          },
+          {
+            "paise": 75000,
+            "coverage": 0.668,
+            "precision": 0.9236526946107785,
+            "matches": 668,
+            "wrong": 51,
+            "exceptions": 332
+          },
+          {
+            "paise": 100000,
+            "coverage": 0.668,
+            "precision": 0.9236526946107785,
+            "matches": 668,
+            "wrong": 51,
+            "exceptions": 332
+          }
+        ]
+      },
+      {
+        "seed": "seed21",
+        "points": [
+          {
+            "paise": 2,
+            "coverage": 0.673,
+            "precision": 1.0,
+            "matches": 673,
+            "wrong": 0,
+            "exceptions": 327
+          },
+          {
+            "paise": 3,
+            "coverage": 0.673,
+            "precision": 1.0,
+            "matches": 673,
+            "wrong": 0,
+            "exceptions": 327
+          },
+          {
+            "paise": 4,
+            "coverage": 0.673,
+            "precision": 1.0,
+            "matches": 673,
+            "wrong": 0,
+            "exceptions": 327
+          },
+          {
+            "paise": 5,
+            "coverage": 0.673,
+            "precision": 1.0,
+            "matches": 673,
+            "wrong": 0,
+            "exceptions": 327
+          },
+          {
+            "paise": 7,
+            "coverage": 0.673,
+            "precision": 1.0,
+            "matches": 673,
+            "wrong": 0,
+            "exceptions": 327
+          },
+          {
+            "paise": 10,
+            "coverage": 0.673,
+            "precision": 1.0,
+            "matches": 673,
+            "wrong": 0,
+            "exceptions": 327
+          },
+          {
+            "paise": 14,
+            "coverage": 0.673,
+            "precision": 1.0,
+            "matches": 673,
+            "wrong": 0,
+            "exceptions": 327
+          },
+          {
+            "paise": 20,
+            "coverage": 0.673,
+            "precision": 1.0,
+            "matches": 673,
+            "wrong": 0,
+            "exceptions": 327
+          },
+          {
+            "paise": 28,
+            "coverage": 0.673,
+            "precision": 1.0,
+            "matches": 673,
+            "wrong": 0,
+            "exceptions": 327
+          },
+          {
+            "paise": 40,
+            "coverage": 0.673,
+            "precision": 1.0,
+            "matches": 673,
+            "wrong": 0,
+            "exceptions": 327
+          },
+          {
+            "paise": 55,
+            "coverage": 0.673,
+            "precision": 1.0,
+            "matches": 673,
+            "wrong": 0,
+            "exceptions": 327
+          },
+          {
+            "paise": 75,
+            "coverage": 0.673,
+            "precision": 1.0,
+            "matches": 673,
+            "wrong": 0,
+            "exceptions": 327
+          },
+          {
+            "paise": 100,
+            "coverage": 0.673,
+            "precision": 1.0,
+            "matches": 673,
+            "wrong": 0,
+            "exceptions": 327
+          },
+          {
+            "paise": 140,
+            "coverage": 0.673,
+            "precision": 1.0,
+            "matches": 673,
+            "wrong": 0,
+            "exceptions": 327
+          },
+          {
+            "paise": 200,
+            "coverage": 0.673,
+            "precision": 1.0,
+            "matches": 673,
+            "wrong": 0,
+            "exceptions": 327
+          },
+          {
+            "paise": 280,
+            "coverage": 0.673,
+            "precision": 1.0,
+            "matches": 673,
+            "wrong": 0,
+            "exceptions": 327
+          },
+          {
+            "paise": 400,
+            "coverage": 0.673,
+            "precision": 1.0,
+            "matches": 673,
+            "wrong": 0,
+            "exceptions": 327
+          },
+          {
+            "paise": 550,
+            "coverage": 0.673,
+            "precision": 1.0,
+            "matches": 673,
+            "wrong": 0,
+            "exceptions": 327
+          },
+          {
+            "paise": 750,
+            "coverage": 0.673,
+            "precision": 1.0,
+            "matches": 673,
+            "wrong": 0,
+            "exceptions": 327
+          },
+          {
+            "paise": 1000,
+            "coverage": 0.673,
+            "precision": 1.0,
+            "matches": 673,
+            "wrong": 0,
+            "exceptions": 327
+          },
+          {
+            "paise": 1400,
+            "coverage": 0.673,
+            "precision": 1.0,
+            "matches": 673,
+            "wrong": 0,
+            "exceptions": 327
+          },
+          {
+            "paise": 2000,
+            "coverage": 0.673,
+            "precision": 1.0,
+            "matches": 673,
+            "wrong": 0,
+            "exceptions": 327
+          },
+          {
+            "paise": 2800,
+            "coverage": 0.673,
+            "precision": 1.0,
+            "matches": 673,
+            "wrong": 0,
+            "exceptions": 327
+          },
+          {
+            "paise": 4000,
+            "coverage": 0.673,
+            "precision": 1.0,
+            "matches": 673,
+            "wrong": 0,
+            "exceptions": 327
+          },
+          {
+            "paise": 5500,
+            "coverage": 0.673,
+            "precision": 1.0,
+            "matches": 673,
+            "wrong": 0,
+            "exceptions": 327
+          },
+          {
+            "paise": 7500,
+            "coverage": 0.673,
+            "precision": 1.0,
+            "matches": 673,
+            "wrong": 0,
+            "exceptions": 327
+          },
+          {
+            "paise": 10000,
+            "coverage": 0.673,
+            "precision": 1.0,
+            "matches": 673,
+            "wrong": 0,
+            "exceptions": 327
+          },
+          {
+            "paise": 14000,
+            "coverage": 0.694,
+            "precision": 0.9697406340057637,
+            "matches": 694,
+            "wrong": 21,
+            "exceptions": 306
+          },
+          {
+            "paise": 20000,
+            "coverage": 0.702,
+            "precision": 0.9586894586894587,
+            "matches": 702,
+            "wrong": 29,
+            "exceptions": 298
+          },
+          {
+            "paise": 28000,
+            "coverage": 0.723,
+            "precision": 0.9308437067773168,
+            "matches": 723,
+            "wrong": 50,
+            "exceptions": 277
+          },
+          {
+            "paise": 40000,
+            "coverage": 0.723,
+            "precision": 0.9308437067773168,
+            "matches": 723,
+            "wrong": 50,
+            "exceptions": 277
+          },
+          {
+            "paise": 55000,
+            "coverage": 0.744,
+            "precision": 0.9045698924731183,
+            "matches": 744,
+            "wrong": 71,
+            "exceptions": 256
+          },
+          {
+            "paise": 75000,
+            "coverage": 0.744,
+            "precision": 0.9045698924731183,
+            "matches": 744,
+            "wrong": 71,
+            "exceptions": 256
+          },
+          {
+            "paise": 100000,
+            "coverage": 0.744,
+            "precision": 0.9045698924731183,
+            "matches": 744,
+            "wrong": 71,
+            "exceptions": 256
+          }
+        ]
+      }
+    ],
+    "shipped": [
+      {
+        "seed": "seed42",
+        "coverage": 0.667,
+        "precision": 1.0
+      },
+      {
+        "seed": "seed7",
+        "coverage": 0.57,
+        "precision": 1.0
+      },
+      {
+        "seed": "seed13",
+        "coverage": 0.617,
+        "precision": 1.0
+      },
+      {
+        "seed": "seed21",
+        "coverage": 0.673,
+        "precision": 1.0
+      }
+    ],
+    "first_precision_loss": [
+      {
+        "seed": "seed42",
+        "paise": 55000
+      },
+      {
+        "seed": "seed7",
+        "paise": 40000
+      },
+      {
+        "seed": "seed13",
+        "paise": 55000
+      },
+      {
+        "seed": "seed21",
+        "paise": 14000
+      }
+    ],
+    "earliest_precision_loss_paise": 14000,
+    "exact_through_paise": 10000,
+    "first_coverage_move": [
+      {
+        "seed": "seed42",
+        "paise": 55000
+      },
+      {
+        "seed": "seed7",
+        "paise": 40000
+      },
+      {
+        "seed": "seed13",
+        "paise": 55000
+      },
+      {
+        "seed": "seed21",
+        "paise": 14000
+      }
+    ]
+  },
+  "subset": {
+    "rows": [
+      {
+        "pool": 5,
+        "tried": 20,
+        "computable": 20,
+        "cap_hits": 0,
+        "truth_found": 20,
+        "unique": 20,
+        "ambiguous": 0,
+        "reliability": 1.0
+      },
+      {
+        "pool": 10,
+        "tried": 20,
+        "computable": 20,
+        "cap_hits": 0,
+        "truth_found": 20,
+        "unique": 20,
+        "ambiguous": 0,
+        "reliability": 1.0
+      },
+      {
+        "pool": 20,
+        "tried": 20,
+        "computable": 20,
+        "cap_hits": 0,
+        "truth_found": 20,
+        "unique": 17,
+        "ambiguous": 3,
+        "reliability": 1.0
+      },
+      {
+        "pool": 40,
+        "tried": 20,
+        "computable": 20,
+        "cap_hits": 0,
+        "truth_found": 16,
+        "unique": 1,
+        "ambiguous": 19,
+        "reliability": 1.0
+      },
+      {
+        "pool": 80,
+        "tried": 20,
+        "computable": 0,
+        "cap_hits": 20,
+        "truth_found": 0,
+        "unique": 0,
+        "ambiguous": 0,
+        "reliability": null
+      }
+    ],
+    "ceiling": 20,
+    "ceiling_reason": "17/17 accepted answers correct at pool 20, from 20 trials",
+    "estimator": {
+      "rows": [
+        {
+          "seed": "seed21",
+          "settlement_id": "setl_20260717_015",
+          "level": "L2",
+          "candidates": 104,
+          "mode": "single",
+          "analytic": 1.5e-05,
+          "empirical": 0.004,
+          "ratio": 266.6666666666667,
+          "analytic_band": "STRONG",
+          "empirical_band": "STRONG",
+          "band_changed": false
+        },
+        {
+          "seed": "seed21",
+          "settlement_id": "setl_20260729_025",
+          "level": "L2",
+          "candidates": 104,
+          "mode": "single",
+          "analytic": 1.5e-05,
+          "empirical": 0.004,
+          "ratio": 266.6666666666667,
+          "analytic_band": "STRONG",
+          "empirical_band": "STRONG",
+          "band_changed": false
+        },
+        {
+          "seed": "seed42",
+          "settlement_id": "setl_20260727_023",
+          "level": "L2",
+          "candidates": 96,
+          "mode": "single",
+          "analytic": 4.1e-05,
+          "empirical": 0.006,
+          "ratio": 146.34146341463415,
+          "analytic_band": "STRONG",
+          "empirical_band": "STRONG",
+          "band_changed": false
+        },
+        {
+          "seed": "seed21",
+          "settlement_id": "setl_20260703_001",
+          "level": "L2",
+          "candidates": 104,
+          "mode": "single",
+          "analytic": 1.5e-05,
+          "empirical": 0.002,
+          "ratio": 133.33333333333334,
+          "analytic_band": "STRONG",
+          "empirical_band": "STRONG",
+          "band_changed": false
+        },
+        {
+          "seed": "seed42",
+          "settlement_id": "setl_20260814_043",
+          "level": "L2",
+          "candidates": 100,
+          "mode": "single",
+          "analytic": 4.2e-05,
+          "empirical": 0.002,
+          "ratio": 47.61904761904762,
+          "analytic_band": "STRONG",
+          "empirical_band": "STRONG",
+          "band_changed": false
+        },
+        {
+          "seed": "seed42",
+          "settlement_id": "setl_20260805_033",
+          "level": "L2",
+          "candidates": 102,
+          "mode": "single",
+          "analytic": 4.3e-05,
+          "empirical": 0.002,
+          "ratio": 46.51162790697674,
+          "analytic_band": "STRONG",
+          "empirical_band": "STRONG",
+          "band_changed": false
+        },
+        {
+          "seed": "seed7",
+          "settlement_id": "setl_20260703_001",
+          "level": "L4",
+          "candidates": 598965,
+          "mode": "pair",
+          "analytic": 0.069406,
+          "empirical": 2.986,
+          "ratio": 43.022217099386225,
+          "analytic_band": "CIRCUMSTANTIAL",
+          "empirical_band": "REFUSE",
+          "band_changed": true
+        },
+        {
+          "seed": "seed21",
+          "settlement_id": "setl_20260709_007",
+          "level": "L4",
+          "candidates": 570846,
+          "mode": "pair",
+          "analytic": 0.068476,
+          "empirical": 2.816,
+          "ratio": 41.12389742391495,
+          "analytic_band": "CIRCUMSTANTIAL",
+          "empirical_band": "REFUSE",
+          "band_changed": true
+        },
+        {
+          "seed": "seed7",
+          "settlement_id": "setl_20260803_030",
+          "level": "L4",
+          "candidates": 574056,
+          "mode": "pair",
+          "analytic": 0.066533,
+          "empirical": 2.634,
+          "ratio": 39.58937670028407,
+          "analytic_band": "CIRCUMSTANTIAL",
+          "empirical_band": "REFUSE",
+          "band_changed": true
+        },
+        {
+          "seed": "seed21",
+          "settlement_id": "setl_20260722_018",
+          "level": "L4",
+          "candidates": 559153,
+          "mode": "pair",
+          "analytic": 0.067074,
+          "empirical": 2.41,
+          "ratio": 35.93046485970719,
+          "analytic_band": "CIRCUMSTANTIAL",
+          "empirical_band": "REFUSE",
+          "band_changed": true
+        },
+        {
+          "seed": "seed42",
+          "settlement_id": "setl_20260722_019",
+          "level": "L4",
+          "candidates": 578350,
+          "mode": "pair",
+          "analytic": 0.069418,
+          "empirical": 2.4,
+          "ratio": 34.573165461407704,
+          "analytic_band": "CIRCUMSTANTIAL",
+          "empirical_band": "REFUSE",
+          "band_changed": true
+        },
+        {
+          "seed": "seed13",
+          "settlement_id": "setl_20260731_029",
+          "level": "L4",
+          "candidates": 586986,
+          "mode": "pair",
+          "analytic": 0.072781,
+          "empirical": 2.456,
+          "ratio": 33.74507082892513,
+          "analytic_band": "CIRCUMSTANTIAL",
+          "empirical_band": "REFUSE",
+          "band_changed": true
+        },
+        {
+          "seed": "seed42",
+          "settlement_id": "setl_20260724_022",
+          "level": "L4",
+          "candidates": 572985,
+          "mode": "pair",
+          "analytic": 0.068774,
+          "empirical": 1.938,
+          "ratio": 28.179253787768634,
+          "analytic_band": "CIRCUMSTANTIAL",
+          "empirical_band": "REFUSE",
+          "band_changed": true
+        },
+        {
+          "seed": "seed7",
+          "settlement_id": "setl_20260819_046",
+          "level": "L4",
+          "candidates": 603351,
+          "mode": "pair",
+          "analytic": 0.069914,
+          "empirical": 1.804,
+          "ratio": 25.803129559172696,
+          "analytic_band": "CIRCUMSTANTIAL",
+          "empirical_band": "REFUSE",
+          "band_changed": true
+        },
+        {
+          "seed": "seed13",
+          "settlement_id": "setl_20260707_003",
+          "level": "L4",
+          "candidates": 586986,
+          "mode": "pair",
+          "analytic": 0.072781,
+          "empirical": 1.45,
+          "ratio": 19.92278204476443,
+          "analytic_band": "CIRCUMSTANTIAL",
+          "empirical_band": "REFUSE",
+          "band_changed": true
+        },
+        {
+          "seed": "seed21",
+          "settlement_id": "setl_20260706_002",
+          "level": "L1",
+          "candidates": 951,
+          "mode": "single",
+          "analytic": 0.000114,
+          "empirical": 0.002,
+          "ratio": 17.543859649122805,
+          "analytic_band": "STRONG",
+          "empirical_band": "STRONG",
+          "band_changed": false
+        },
+        {
+          "seed": "seed7",
+          "settlement_id": "setl_20260708_005",
+          "level": "L4",
+          "candidates": 590241,
+          "mode": "pair",
+          "analytic": 0.068395,
+          "empirical": 0.8,
+          "ratio": 11.696761459170993,
+          "analytic_band": "CIRCUMSTANTIAL",
+          "empirical_band": "CIRCUMSTANTIAL",
+          "band_changed": false
+        },
+        {
+          "seed": "seed7",
+          "settlement_id": "setl_20260715_013",
+          "level": "L4",
+          "candidates": 586986,
+          "mode": "pair",
+          "analytic": 0.068018,
+          "empirical": 0.398,
+          "ratio": 5.851392278514512,
+          "analytic_band": "CIRCUMSTANTIAL",
+          "empirical_band": "CIRCUMSTANTIAL",
+          "band_changed": false
+        },
+        {
+          "seed": "seed21",
+          "settlement_id": "setl_20260805_034",
+          "level": "L4",
+          "candidates": 566580,
+          "mode": "pair",
+          "analytic": 0.067965,
+          "empirical": 0.232,
+          "ratio": 3.4135216655631577,
+          "analytic_band": "CIRCUMSTANTIAL",
+          "empirical_band": "CIRCUMSTANTIAL",
+          "band_changed": false
+        },
+        {
+          "seed": "seed13",
+          "settlement_id": "setl_20260812_041",
+          "level": "L4",
+          "candidates": 601156,
+          "mode": "pair",
+          "analytic": 0.074537,
+          "empirical": 0.166,
+          "ratio": 2.2270818519661377,
+          "analytic_band": "CIRCUMSTANTIAL",
+          "empirical_band": "CIRCUMSTANTIAL",
+          "band_changed": false
+        },
+        {
+          "seed": "seed42",
+          "settlement_id": "setl_20260708_005",
+          "level": "L3",
+          "candidates": 10,
+          "mode": "single",
+          "analytic": 6e-06,
+          "empirical": 0.0,
+          "ratio": 0.0,
+          "analytic_band": "STRONG",
+          "empirical_band": "STRONG",
+          "band_changed": false
+        },
+        {
+          "seed": "seed42",
+          "settlement_id": "setl_20260717_015",
+          "level": "L3",
+          "candidates": 10,
+          "mode": "single",
+          "analytic": 6e-06,
+          "empirical": 0.0,
+          "ratio": 0.0,
+          "analytic_band": "STRONG",
+          "empirical_band": "STRONG",
+          "band_changed": false
+        },
+        {
+          "seed": "seed42",
+          "settlement_id": "setl_20260728_024",
+          "level": "L3",
+          "candidates": 10,
+          "mode": "single",
+          "analytic": 6e-06,
+          "empirical": 0.0,
+          "ratio": 0.0,
+          "analytic_band": "STRONG",
+          "empirical_band": "STRONG",
+          "band_changed": false
+        },
+        {
+          "seed": "seed42",
+          "settlement_id": "setl_20260729_025",
+          "level": "L2",
+          "candidates": 102,
+          "mode": "single",
+          "analytic": 4.3e-05,
+          "empirical": 0.0,
+          "ratio": 0.0,
+          "analytic_band": "STRONG",
+          "empirical_band": "STRONG",
+          "band_changed": false
+        },
+        {
+          "seed": "seed7",
+          "settlement_id": "setl_20260708_004",
+          "level": "L2",
+          "candidates": 107,
+          "mode": "single",
+          "analytic": 3.1e-05,
+          "empirical": 0.0,
+          "ratio": 0.0,
+          "analytic_band": "STRONG",
+          "empirical_band": "STRONG",
+          "band_changed": false
+        },
+        {
+          "seed": "seed7",
+          "settlement_id": "setl_20260709_007",
+          "level": "L2",
+          "candidates": 108,
+          "mode": "single",
+          "analytic": 3.1e-05,
+          "empirical": 0.0,
+          "ratio": 0.0,
+          "analytic_band": "STRONG",
+          "empirical_band": "STRONG",
+          "band_changed": false
+        },
+        {
+          "seed": "seed7",
+          "settlement_id": "setl_20260715_011",
+          "level": "L3",
+          "candidates": 11,
+          "mode": "single",
+          "analytic": 1.2e-05,
+          "empirical": 0.0,
+          "ratio": 0.0,
+          "analytic_band": "STRONG",
+          "empirical_band": "STRONG",
+          "band_changed": false
+        },
+        {
+          "seed": "seed7",
+          "settlement_id": "setl_20260722_018",
+          "level": "L3",
+          "candidates": 11,
+          "mode": "single",
+          "analytic": 1.2e-05,
+          "empirical": 0.0,
+          "ratio": 0.0,
+          "analytic_band": "STRONG",
+          "empirical_band": "STRONG",
+          "band_changed": false
+        },
+        {
+          "seed": "seed7",
+          "settlement_id": "setl_20260804_031",
+          "level": "L2",
+          "candidates": 105,
+          "mode": "single",
+          "analytic": 3.1e-05,
+          "empirical": 0.0,
+          "ratio": 0.0,
+          "analytic_band": "STRONG",
+          "empirical_band": "STRONG",
+          "band_changed": false
+        },
+        {
+          "seed": "seed7",
+          "settlement_id": "setl_20260806_035",
+          "level": "L2",
+          "candidates": 106,
+          "mode": "single",
+          "analytic": 3.1e-05,
+          "empirical": 0.0,
+          "ratio": 0.0,
+          "analytic_band": "STRONG",
+          "empirical_band": "STRONG",
+          "band_changed": false
+        },
+        {
+          "seed": "seed7",
+          "settlement_id": "setl_20260812_039",
+          "level": "L2",
+          "candidates": 106,
+          "mode": "single",
+          "analytic": 3.1e-05,
+          "empirical": 0.0,
+          "ratio": 0.0,
+          "analytic_band": "STRONG",
+          "empirical_band": "STRONG",
+          "band_changed": false
+        },
+        {
+          "seed": "seed7",
+          "settlement_id": "setl_20260818_045",
+          "level": "L3",
+          "candidates": 11,
+          "mode": "single",
+          "analytic": 1.2e-05,
+          "empirical": 0.0,
+          "ratio": 0.0,
+          "analytic_band": "STRONG",
+          "empirical_band": "STRONG",
+          "band_changed": false
+        },
+        {
+          "seed": "seed13",
+          "settlement_id": "setl_20260721_017",
+          "level": "L3",
+          "candidates": 13,
+          "mode": "single",
+          "analytic": 1.1e-05,
+          "empirical": 0.0,
+          "ratio": 0.0,
+          "analytic_band": "STRONG",
+          "empirical_band": "STRONG",
+          "band_changed": false
+        },
+        {
+          "seed": "seed13",
+          "settlement_id": "setl_20260729_025",
+          "level": "L3",
+          "candidates": 13,
+          "mode": "single",
+          "analytic": 1.1e-05,
+          "empirical": 0.0,
+          "ratio": 0.0,
+          "analytic_band": "STRONG",
+          "empirical_band": "STRONG",
+          "band_changed": false
+        },
+        {
+          "seed": "seed13",
+          "settlement_id": "setl_20260812_039",
+          "level": "L3",
+          "candidates": 12,
+          "mode": "single",
+          "analytic": 1e-05,
+          "empirical": 0.0,
+          "ratio": 0.0,
+          "analytic_band": "STRONG",
+          "empirical_band": "STRONG",
+          "band_changed": false
+        },
+        {
+          "seed": "seed13",
+          "settlement_id": "setl_20260814_043",
+          "level": "L3",
+          "candidates": 13,
+          "mode": "single",
+          "analytic": 1.1e-05,
+          "empirical": 0.0,
+          "ratio": 0.0,
+          "analytic_band": "STRONG",
+          "empirical_band": "STRONG",
+          "band_changed": false
+        },
+        {
+          "seed": "seed21",
+          "settlement_id": "setl_20260708_004",
+          "level": "L3",
+          "candidates": 6,
+          "mode": "single",
+          "analytic": 3.3e-05,
+          "empirical": 0.0,
+          "ratio": 0.0,
+          "analytic_band": "STRONG",
+          "empirical_band": "STRONG",
+          "band_changed": false
+        },
+        {
+          "seed": "seed21",
+          "settlement_id": "setl_20260714_010",
+          "level": "L3",
+          "candidates": 6,
+          "mode": "single",
+          "analytic": 3.3e-05,
+          "empirical": 0.0,
+          "ratio": 0.0,
+          "analytic_band": "STRONG",
+          "empirical_band": "STRONG",
+          "band_changed": false
+        },
+        {
+          "seed": "seed21",
+          "settlement_id": "setl_20260728_024",
+          "level": "L3",
+          "candidates": 6,
+          "mode": "single",
+          "analytic": 3.3e-05,
+          "empirical": 0.0,
+          "ratio": 0.0,
+          "analytic_band": "STRONG",
+          "empirical_band": "STRONG",
+          "band_changed": false
+        },
+        {
+          "seed": "seed21",
+          "settlement_id": "setl_20260813_042",
+          "level": "L3",
+          "candidates": 6,
+          "mode": "single",
+          "analytic": 3.3e-05,
+          "empirical": 0.0,
+          "ratio": 0.0,
+          "analytic_band": "STRONG",
+          "empirical_band": "STRONG",
+          "band_changed": false
+        }
+      ],
+      "levels": [
+        {
+          "level": "L1",
+          "n": 1,
+          "changed": 0,
+          "ratio_min": 17.543859649122805,
+          "ratio_max": 17.543859649122805,
+          "ratio_mean": 17.543859649122805,
+          "candidates_max": 951
+        },
+        {
+          "level": "L2",
+          "n": 12,
+          "changed": 0,
+          "ratio_min": 0.0,
+          "ratio_max": 266.6666666666667,
+          "ratio_mean": 75.5949004672771,
+          "candidates_max": 108
+        },
+        {
+          "level": "L3",
+          "n": 14,
+          "changed": 0,
+          "ratio_min": 0.0,
+          "ratio_max": 0.0,
+          "ratio_mean": 0.0,
+          "candidates_max": 13
+        },
+        {
+          "level": "L4",
+          "n": 13,
+          "changed": 9,
+          "ratio_min": 2.2270818519661377,
+          "ratio_max": 43.022217099386225,
+          "ratio_mean": 25.006008847734297,
+          "candidates_max": 603351
+        }
+      ],
+      "l4": [
+        {
+          "seed": "seed7",
+          "settlement_id": "setl_20260703_001",
+          "level": "L4",
+          "candidates": 598965,
+          "mode": "pair",
+          "analytic": 0.069406,
+          "empirical": 2.986,
+          "ratio": 43.022217099386225,
+          "analytic_band": "CIRCUMSTANTIAL",
+          "empirical_band": "REFUSE",
+          "band_changed": true
+        },
+        {
+          "seed": "seed21",
+          "settlement_id": "setl_20260709_007",
+          "level": "L4",
+          "candidates": 570846,
+          "mode": "pair",
+          "analytic": 0.068476,
+          "empirical": 2.816,
+          "ratio": 41.12389742391495,
+          "analytic_band": "CIRCUMSTANTIAL",
+          "empirical_band": "REFUSE",
+          "band_changed": true
+        },
+        {
+          "seed": "seed7",
+          "settlement_id": "setl_20260803_030",
+          "level": "L4",
+          "candidates": 574056,
+          "mode": "pair",
+          "analytic": 0.066533,
+          "empirical": 2.634,
+          "ratio": 39.58937670028407,
+          "analytic_band": "CIRCUMSTANTIAL",
+          "empirical_band": "REFUSE",
+          "band_changed": true
+        },
+        {
+          "seed": "seed21",
+          "settlement_id": "setl_20260722_018",
+          "level": "L4",
+          "candidates": 559153,
+          "mode": "pair",
+          "analytic": 0.067074,
+          "empirical": 2.41,
+          "ratio": 35.93046485970719,
+          "analytic_band": "CIRCUMSTANTIAL",
+          "empirical_band": "REFUSE",
+          "band_changed": true
+        },
+        {
+          "seed": "seed42",
+          "settlement_id": "setl_20260722_019",
+          "level": "L4",
+          "candidates": 578350,
+          "mode": "pair",
+          "analytic": 0.069418,
+          "empirical": 2.4,
+          "ratio": 34.573165461407704,
+          "analytic_band": "CIRCUMSTANTIAL",
+          "empirical_band": "REFUSE",
+          "band_changed": true
+        },
+        {
+          "seed": "seed13",
+          "settlement_id": "setl_20260731_029",
+          "level": "L4",
+          "candidates": 586986,
+          "mode": "pair",
+          "analytic": 0.072781,
+          "empirical": 2.456,
+          "ratio": 33.74507082892513,
+          "analytic_band": "CIRCUMSTANTIAL",
+          "empirical_band": "REFUSE",
+          "band_changed": true
+        },
+        {
+          "seed": "seed42",
+          "settlement_id": "setl_20260724_022",
+          "level": "L4",
+          "candidates": 572985,
+          "mode": "pair",
+          "analytic": 0.068774,
+          "empirical": 1.938,
+          "ratio": 28.179253787768634,
+          "analytic_band": "CIRCUMSTANTIAL",
+          "empirical_band": "REFUSE",
+          "band_changed": true
+        },
+        {
+          "seed": "seed7",
+          "settlement_id": "setl_20260819_046",
+          "level": "L4",
+          "candidates": 603351,
+          "mode": "pair",
+          "analytic": 0.069914,
+          "empirical": 1.804,
+          "ratio": 25.803129559172696,
+          "analytic_band": "CIRCUMSTANTIAL",
+          "empirical_band": "REFUSE",
+          "band_changed": true
+        },
+        {
+          "seed": "seed13",
+          "settlement_id": "setl_20260707_003",
+          "level": "L4",
+          "candidates": 586986,
+          "mode": "pair",
+          "analytic": 0.072781,
+          "empirical": 1.45,
+          "ratio": 19.92278204476443,
+          "analytic_band": "CIRCUMSTANTIAL",
+          "empirical_band": "REFUSE",
+          "band_changed": true
+        },
+        {
+          "seed": "seed7",
+          "settlement_id": "setl_20260708_005",
+          "level": "L4",
+          "candidates": 590241,
+          "mode": "pair",
+          "analytic": 0.068395,
+          "empirical": 0.8,
+          "ratio": 11.696761459170993,
+          "analytic_band": "CIRCUMSTANTIAL",
+          "empirical_band": "CIRCUMSTANTIAL",
+          "band_changed": false
+        },
+        {
+          "seed": "seed7",
+          "settlement_id": "setl_20260715_013",
+          "level": "L4",
+          "candidates": 586986,
+          "mode": "pair",
+          "analytic": 0.068018,
+          "empirical": 0.398,
+          "ratio": 5.851392278514512,
+          "analytic_band": "CIRCUMSTANTIAL",
+          "empirical_band": "CIRCUMSTANTIAL",
+          "band_changed": false
+        },
+        {
+          "seed": "seed21",
+          "settlement_id": "setl_20260805_034",
+          "level": "L4",
+          "candidates": 566580,
+          "mode": "pair",
+          "analytic": 0.067965,
+          "empirical": 0.232,
+          "ratio": 3.4135216655631577,
+          "analytic_band": "CIRCUMSTANTIAL",
+          "empirical_band": "CIRCUMSTANTIAL",
+          "band_changed": false
+        },
+        {
+          "seed": "seed13",
+          "settlement_id": "setl_20260812_041",
+          "level": "L4",
+          "candidates": 601156,
+          "mode": "pair",
+          "analytic": 0.074537,
+          "empirical": 0.166,
+          "ratio": 2.2270818519661377,
+          "analytic_band": "CIRCUMSTANTIAL",
+          "empirical_band": "CIRCUMSTANTIAL",
+          "band_changed": false
+        }
+      ],
+      "headline": {
+        "seed": "seed42",
+        "settlement_id": "setl_20260722_019",
+        "level": "L4",
+        "candidates": 578350,
+        "mode": "pair",
+        "analytic": 0.069418,
+        "empirical": 2.4,
+        "ratio": 34.573165461407704,
+        "analytic_band": "CIRCUMSTANTIAL",
+        "empirical_band": "REFUSE",
+        "band_changed": true
+      },
+      "changed": 9,
+      "worst": {
+        "seed": "seed7",
+        "settlement_id": "setl_20260703_001",
+        "level": "L4",
+        "candidates": 598965,
+        "mode": "pair",
+        "analytic": 0.069406,
+        "empirical": 2.986,
+        "ratio": 43.022217099386225,
+        "analytic_band": "CIRCUMSTANTIAL",
+        "empirical_band": "REFUSE",
+        "band_changed": true
+      },
+      "thresholds": {
+        "strong_max": 0.01,
+        "refuse_min": 1.0
+      },
+      "note": "The estimate is measured against the actual amount distribution, not assumed uniform."
+    }
+  },
+  "calibration": {
+    "local_seeds": [
+      "seed42",
+      "seed7",
+      "seed13",
+      "seed21"
+    ],
+    "bands": [
+      {
+        "band": "STRONG",
+        "meaning": "accidental fit essentially ruled out",
+        "attributions": 27,
+        "correct": 27,
+        "wrong": 0,
+        "accuracy": 1.0,
+        "examples_wrong": []
+      },
+      {
+        "band": "CIRCUMSTANTIAL",
+        "meaning": "plausible, verify before acting",
+        "attributions": 3,
+        "correct": 3,
+        "wrong": 0,
+        "accuracy": 1.0,
+        "examples_wrong": []
+      },
+      {
+        "band": "REFUSE",
+        "meaning": "chance explains it equally well",
+        "attributions": 0,
+        "correct": 0,
+        "wrong": 0,
+        "accuracy": null,
+        "examples_wrong": []
+      }
+    ],
+    "per_seed": [
+      {
+        "seed": "seed42",
+        "shortfalls": 11,
+        "attributions": 7,
+        "refused": 2
+      },
+      {
+        "seed": "seed7",
+        "shortfalls": 17,
+        "attributions": 9,
+        "refused": 3
+      },
+      {
+        "seed": "seed13",
+        "shortfalls": 15,
+        "attributions": 5,
+        "refused": 2
+      },
+      {
+        "seed": "seed21",
+        "shortfalls": 12,
+        "attributions": 9,
+        "refused": 2
+      }
+    ],
+    "thirty_seed": {
+      "seeds": 30,
+      "min": 0.7777777777777778,
+      "max": 1.0,
+      "mean": 0.9925925925925926,
+      "sd": 0.0398901096824778,
+      "worst_seed": 206,
+      "band_totals": {
+        "CIRCUMSTANTIAL": 50,
+        "REFUSE": 58,
+        "STRONG": 200
+      },
+      "perfect_seeds": 29
+    }
+  },
+  "held_out": {
+    "seed": "seed99",
+    "label": "Seed 99",
+    "status": "held out — not yet scored",
+    "run": false,
+    "metrics": {
+      "coverage": null,
+      "precision": null,
+      "recall": null,
+      "exception_accuracy": null,
+      "attribution_accuracy": null
+    }
+  }
+}
