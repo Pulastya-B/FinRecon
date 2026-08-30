@@ -70,15 +70,9 @@ python tests/test_agent_answers.py        # live agent behaviour (skips without 
 ## What it does
 
 ```mermaid
-flowchart LR
-    subgraph SRC["Six source ledgers"]
-        O["orders.csv — 1,000"]
-        P["gateway_payments.csv — 985"]
-        R["gateway_refunds.csv — 102"]
-        C["gateway_chargebacks.csv — 10"]
-        S["gateway_settlements.csv — 46"]
-        B["bank.csv — 79"]
-    end
+%%{init: {"flowchart": {"rankSpacing": 22, "nodeSpacing": 22, "wrappingWidth": 460}}}%%
+flowchart TB
+    SRC["Six source ledgers — 2,222 rows<br/>orders.csv 1,000 · gateway_payments.csv 985<br/>gateway_refunds.csv 102 · gateway_chargebacks.csv 10<br/>gateway_settlements.csv 46 · bank.csv 79"]
 
     SRC --> T0["Tier 0 · normalise<br/>one shape for six schemas"]
     T0 --> T1["Tier 1 · exact reference<br/>join on what both sides state"]
@@ -103,10 +97,11 @@ measurement rather than two unrelated runs.
 ## Where the chain actually breaks
 
 ```mermaid
+%%{init: {"flowchart": {"rankSpacing": 24, "nodeSpacing": 24, "wrappingWidth": 200}}}%%
 flowchart LR
-    O["Orders"] -->|order_id| P["Gateway payments"]
+    O["Orders"] -->|order_id| P["Gateway<br/>payments"]
     P -->|settlement_id| S["Payouts"]
-    S -.->|"UTR buried in free text"| B["Bank credits"]
+    S -.->|"UTR<br/>buried in<br/>free text"| B["Bank<br/>credits"]
 
     style B fill:#ffebee,stroke:#d93025
     linkStyle 2 stroke:#d93025,stroke-dasharray: 5 5
@@ -241,15 +236,17 @@ credited or already overdue. It occurs on 4 of 30 seeds.*
 ## The finance-ops loop
 
 ```mermaid
-flowchart LR
-    RUN["Run"] --> DETECT["Detect<br/>333 exception rows"]
-    DETECT --> GROUP["Group by root cause<br/>16 findings"]
-    GROUP --> EXPLAIN["Explain<br/>cached prose, offline"]
-    EXPLAIN --> INTERROGATE["Why not?<br/>tier-by-tier trace"]
-    INTERROGATE --> ASK["Ask<br/>live agent, 12 tools"]
-    ASK --> DECIDE["Decide<br/>approve · reject · escalate"]
-    DECIDE --> BURN["Queue burns down<br/>money remaining"]
-    BURN --> AUDIT["Audit trail<br/>CSV export"]
+%%{init: {"flowchart": {"rankSpacing": 26, "nodeSpacing": 26, "wrappingWidth": 400}}}%%
+flowchart TB
+    RUN["Run the reconciliation"] --> DETECT["Detect — 333 exception rows"]
+    DETECT --> GROUP["Group by root cause — 16 findings"]
+    GROUP --> EXPLAIN["Explain — cached prose, offline"]
+    EXPLAIN --> INTERROGATE["Why not? — tier-by-tier trace"]
+    INTERROGATE --> ASK["Ask — live agent, 12 tools"]
+    ASK --> DECIDE["Decide — approve · reject · escalate"]
+    DECIDE --> BURN["Queue burns down — money remaining"]
+    BURN --> AUDIT["Audit trail — CSV export"]
+    AUDIT -.->|next run| RUN
 
     style AUDIT fill:#e8f5e9,stroke:#2e7d32
 ```
@@ -285,23 +282,17 @@ never given the ledgers — there is no dataset in its context to misread, and i
 cannot compute a total because it never sees the rows.
 
 ```mermaid
-flowchart TD
+%%{init: {"flowchart": {"rankSpacing": 28, "nodeSpacing": 28, "wrappingWidth": 320}}}%%
+flowchart TB
     Q["Question"] --> M{"Model"}
-    M -->|chooses a tool| T["12 tools over the engine"]
-    T --> E["Engine verdicts<br/>why_not · queue_breakdown · trace_chain<br/>what_would_change · compare_findings"]
-    E -->|tool results only| M
+    M <-->|"up to 6 rounds<br/>engine verdicts only"| T["12 tools over the engine<br/>why_not · queue_breakdown<br/>trace_chain · what_would_change<br/>compare_findings"]
     M --> A["Answer"]
-    A --> V["verify_grounding"]
-
-    V --> N["TOKENS<br/>numbers · ids · reason codes"]
-    V --> CL["CLAIM TYPES<br/>causal · exclusivity · timing<br/>accuracy · prediction"]
-
-    N --> OK{"grounded?"}
-    CL --> OK
-    OK -->|yes| SHIP["Rendered with a grounded badge"]
-    OK -->|"no, first time"| RETRY["Sent back with the<br/>offending tokens named"]
-    RETRY --> M
-    OK -->|"no, again"| FLAG["Rendered flagged in red"]
+    A --> V["verify_grounding<br/>TOKENS — numbers · ids · reason codes<br/>CLAIM TYPES — causal · exclusivity<br/>timing · accuracy · prediction"]
+    V --> OK{"grounded?"}
+    OK -->|yes| SHIP["Rendered with<br/>a grounded badge"]
+    OK -->|no| RETRY["Retried once, with the<br/>offending tokens named"]
+    RETRY -->|"still not grounded"| FLAG["Rendered<br/>flagged in red"]
+    RETRY -.->|"second attempt"| M
 
     style SHIP fill:#e8f5e9,stroke:#2e7d32
     style FLAG fill:#ffebee,stroke:#d93025
