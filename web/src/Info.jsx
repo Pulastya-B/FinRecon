@@ -47,8 +47,18 @@ function place(anchor) {
   }
 }
 
-export function InfoDot({ id, className = '' }) {
-  const entry = INFO[id]
+/*
+ * `body` overrides the stored text.
+ *
+ * Two of these explanations quote figures from the run -- coverage and the
+ * exception-row count -- and the stored versions were seed 42's. On seed 7 the
+ * INVESTIGABLE popover said "333 exception rows" while the strip two
+ * centimetres above it said 430. Callers that have the live summary pass the
+ * sentence in; the rest are seed-independent and use the constant.
+ */
+export function InfoDot({ id, className = '', body }) {
+  const stored = INFO[id]
+  const entry = stored && body ? { ...stored, body } : stored
   const anchor = useRef(null)
   const [box, setBox] = useState(null)
   const open = Boolean(box)
@@ -201,93 +211,4 @@ export const INFO = {
       'range the 30-seed sweep had already established. That drop is what a ' +
       'held-out set exists to expose.',
   },
-}
-
-/* --------------------------------------------------------------------------
- * One sentence per page, below the stat strip.
- * ------------------------------------------------------------------------ */
-export const PAGE_BANNER = {
-  Run:
-    'Reconciles three ledgers that never agree: what the merchant sold, what ' +
-    'the gateway collected, what the bank actually paid.',
-  Queue:
-    '333 exception rows grouped into 16 things a person actually has to ' +
-    'decide, sorted by money at stake.',
-  Cash:
-    'Where every released payout actually is, as of the last line in the bank ' +
-    'statement — a position, not a forecast.',
-  Ask:
-    'A live agent with 12 tools over the completed run. It is never given the ' +
-    'ledgers, and every figure it reports is checked against a tool result ' +
-    'before you see it.',
-  Evidence:
-    'Every accuracy claim in this project, measured across 30 datasets the ' +
-    'engine never saw — ranges, not best case.',
-  Data:
-    'The six source ledgers. Order IDs elsewhere in the app deep-link into ' +
-    'these rows.',
-}
-
-export function PageBanner({ page, dismissed, onDismiss }) {
-  const text = PAGE_BANNER[page]
-  if (!text || dismissed) return null
-  return (
-    <div data-page-banner={page} className="explain-band mx-gutter mb-3">
-      <span className="min-w-0 flex-1">{text}</span>
-      <button
-        type="button"
-        onClick={onDismiss}
-        className="shrink-0 text-n-500 underline decoration-n-300 underline-offset-2 hover:text-n-800"
-      >
-        dismiss
-      </button>
-    </div>
-  )
-}
-
-/* --------------------------------------------------------------------------
- * "Start here" — the Run page only.
- *
- * Three numbered lines and nothing else. No illustration and no hero styling:
- * a reader who has just landed is deciding whether this is worth five minutes,
- * and a decorated panel answers a question they did not ask.
- * ------------------------------------------------------------------------ */
-const STEPS = [
-  ['Run seed 42', '2,222 rows across six ledgers, about two seconds'],
-  [
-    'Open the Queue and click the top finding',
-    'the settlement arithmetic is the thing a spreadsheet cannot do',
-  ],
-  [
-    'Check Evidence',
-    'every accuracy claim measured across 30 datasets the engine never saw',
-  ],
-]
-
-export function StartHere({ dismissed, onDismiss }) {
-  if (dismissed) return null
-  return (
-    <div data-start-here="" className="explain-panel mb-5">
-      <div className="mb-2.5 flex items-baseline justify-between gap-3">
-        <span className="text-label uppercase text-n-800">Start here</span>
-        <button
-          type="button"
-          onClick={onDismiss}
-          className="text-body-sm text-n-500 underline decoration-n-300 underline-offset-2 hover:text-n-800"
-        >
-          dismiss
-        </button>
-      </div>
-      <ol className="grid gap-1.5">
-        {STEPS.map(([what, why], i) => (
-          <li key={what} className="flex gap-2.5 text-body-sm leading-[19px]">
-            <span className="tnum shrink-0 text-n-500">{i + 1}.</span>
-            <span className="min-w-0 text-n-600">
-              <span className="font-semibold text-n-900">{what}</span> — {why}
-            </span>
-          </li>
-        ))}
-      </ol>
-    </div>
-  )
 }

@@ -1334,3 +1334,45 @@ of pane height, which is 0-2 fewer visible rows:
                seed13 15/19 (was 15)   seed21 13/17 (was 14)
     1440x900   seed42 15/16 (was 16)   seed7 18/22 (was 18)
                seed13 15/19 (was 17)   seed21 15/17 (was 17)
+
+## [2026-08-30 tour] Banner strips replaced with a spotlight tour
+Observed: the explanation banners read as a site notice -- a full-width band
+across the top of every page, in the one place the layout had deliberately kept
+clear. Feedback was that it looked raw and spoiled the design.
+Root cause: orientation copy placed NEXT TO the interface instead of pointing at
+it. A band cannot say which thing it is talking about.
+Change made: web/src/Tour.jsx (new) -- a scrim with a hole cut around one
+component and a card beside it. Run and Queue only. Auto-plays once per page per
+session, then lives behind a small glyph at the top right.
+  - The hole is one element with a 9999px spread box-shadow rather than four
+    bands or an SVG mask: no corner seams, and it animates between steps.
+  - placeCard tries below, then above, then BESIDE, then over. The side branch
+    was added after the first build dropped the card on top of the queue rows
+    it was describing -- the section is 471px tall, so neither above nor below
+    fits, and there was an empty 404px column to the right the whole time.
+  - Queue step text reads live figures from `summary`. The banner version
+    hard-coded seed 42, and on seed 7 would have said 333 exception rows while
+    the strip behind it said 430.
+  - web/src/Info.jsx: PageBanner and StartHere deleted; InfoDot kept, and it
+    now takes a `body` override so the coverage and investigable popovers quote
+    the run on screen rather than seed 42's.
+Verification: scratchpad/tourcheck.py -- auto-plays once on Run, does not
+replay on return, replays from the glyph, Esc closes; the Queue tour waits for
+a run and quotes 667/1,000 and 333/16 live; every spotlight has a non-zero hole
+and every card lands inside the viewport across all six steps; no banner
+element or banner copy remains on any of the six pages. On seed 7 the
+INVESTIGABLE popover reads 430 rows / 22 findings, matching the strip.
+
+## [2026-08-30 tour-blocks-probes] The tour scrim broke two existing probes
+Observed: cashshot.py and loopcheck.py started failing after the tour landed.
+Playwright reported "<div class='tour-root'> intercepts pointer events".
+Expected: pass.
+Investigated: not a defect. The scrim blocks pointer events, which is what
+makes a spotlight modal and is correct for a reader; the probes predate it and
+click immediately after load, racing a 700ms auto-play timer.
+Change made: App.jsx honours ?tour=off, which suppresses auto-play while
+leaving the glyph working. The two probes now load that URL. Chosen over
+sprinkling Escape presses through them, which would have been timing-dependent
+in exactly the way this project keeps getting caught by.
+Verification: both probes pass again; tourcheck.py, which loads the plain URL,
+still sees the tour auto-play.

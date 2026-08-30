@@ -6,7 +6,8 @@ import EvidencePage from './Evidence.jsx'
 import Ask from './Ask.jsx'
 import Trace from './Trace.jsx'
 import Cash from './Cash.jsx'
-import { InfoDot, PageBanner, StartHere } from './Info.jsx'
+import { InfoDot } from './Info.jsx'
+import Tour, { runSteps, queueSteps } from './Tour.jsx'
 
 async function api(path, options) {
   const res = await fetch(path, {
@@ -206,12 +207,23 @@ function Stats({ summary }) {
   // figure and INCORRECT is the precision one, so those are the explanations
   // they carry -- the card label is the number's name, the glyph is what it
   // means and why it is the one to look at.
+  const pct = summary.total_orders
+    ? ((summary.matched / summary.total_orders) * 100).toFixed(2)
+    : '0.00'
+  const rows = summary.exception_rows.toLocaleString('en-IN')
+
   const cells = [
     {
       label: 'Matched',
       value: `${summary.matched.toLocaleString('en-IN')} / ${summary.total_orders.toLocaleString('en-IN')}`,
       tip: TIPS.matched,
       info: 'coverage',
+      // Live, not seed 42's. See the note on InfoDot's `body` prop.
+      body:
+        `${pct}% of orders tied all the way through to a bank line. It is not ` +
+        `higher because the other ${rows} chains are genuinely broken and must ` +
+        `not be matched — recall is 100%, meaning every chain that COULD be ` +
+        `matched was.`,
     },
     { label: 'Incorrect', value: String(summary.incorrect), tip: TIPS.incorrect,
       accent: true, info: 'precision' },
@@ -221,12 +233,16 @@ function Stats({ summary }) {
       sub: `${summary.exception_rows} rows`,
       tip: TIPS.investigable,
       info: 'investigable',
+      body:
+        `${rows} exception rows grouped by root cause into ${summary.groups} ` +
+        `findings. One missing payout strands dozens of orders — that is one ` +
+        `thing to investigate, not dozens.`,
     },
     { label: 'Unexplained', value: summary.unexplained, tip: TIPS.unexplained,
       info: 'unexplained' },
   ]
   return (
-    <div className="grid shrink-0 grid-cols-4 gap-3 px-gutter pb-4 pt-4">
+    <div data-tour="stats" className="grid shrink-0 grid-cols-4 gap-3 px-gutter pb-4 pt-4">
       {cells.map((c) => (
         <div
           key={c.label}
@@ -247,7 +263,7 @@ function Stats({ summary }) {
             <Tip text={c.tip} className="shrink-0 text-label uppercase text-n-600">
               {c.label}
             </Tip>
-            <InfoDot id={c.info} />
+            <InfoDot id={c.info} body={c.body} />
             {c.sub && <span className="tnum text-body-sm text-n-500">{c.sub}</span>}
           </div>
         </div>
@@ -833,17 +849,11 @@ function Claim({ figure, label, body }) {
   )
 }
 
-function RunPanel({ seeds, seed, setSeed, onRun, running, summary, elapsed, cached,
-                    startHereDismissed, onDismissStartHere }) {
+function RunPanel({ seeds, seed, setSeed, onRun, running, summary, elapsed, cached }) {
   const current = seeds.find((s) => s.seed === seed)
   return (
     <div className="flex-1 overflow-y-auto px-gutter pb-gutter pt-12">
       <div className="mx-auto max-w-[880px]">
-        <StartHere
-          dismissed={startHereDismissed}
-          onDismiss={onDismissStartHere}
-        />
-
         <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-n-200 bg-n-0 px-3 py-1 text-label uppercase text-n-600">
           <span className="h-[6px] w-[6px] rounded-full bg-accent" />
           Three-way reconciliation
@@ -860,7 +870,7 @@ function RunPanel({ seeds, seed, setSeed, onRun, running, summary, elapsed, cach
           the refusals, grouped by cause and sorted by money.
         </p>
 
-        <div className="panel mb-4 p-panel">
+        <div data-tour="run-card" className="panel mb-4 p-panel">
           <div className="flex flex-wrap items-center gap-3">
             <select
               value={seed}
@@ -887,12 +897,12 @@ function RunPanel({ seeds, seed, setSeed, onRun, running, summary, elapsed, cach
               </span>
             )}
             <span className="ml-auto text-body-sm text-n-500">
-              runs locally · no network call
+              
             </span>
           </div>
         </div>
 
-        <div className="panel mb-4 p-panel">
+        <div data-tour="chain" className="panel mb-4 p-panel">
           <div className="mb-4 flex flex-wrap items-baseline gap-2">
             <h2 className="text-label uppercase text-n-800">Where the chain breaks</h2>
             <span className="text-body-sm text-n-500">
@@ -1017,7 +1027,7 @@ function RunPanel({ seeds, seed, setSeed, onRun, running, summary, elapsed, cach
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-3 pb-4">
+        <div data-tour="claims" className="grid grid-cols-3 gap-3 pb-4">
           <Claim
             figure="100.00%"
             label="Precision"
@@ -1058,11 +1068,54 @@ export default function App() {
   // The finding the Ask page is currently about, carried in from the queue.
   const [askSubject, setAskSubject] = useState(null)
   const [auditOpen, setAuditOpen] = useState(false)
-  // Session-only. localStorage is unavailable here, and a banner that stays
-  // dismissed across a reload is the wrong default for a page a judge opens
-  // once anyway.
-  const [banners, setBanners] = useState({})
-  const [startHere, setStartHere] = useState(false)
+  /*
+   * The tour runs itself once per page, then only when asked.
+   *
+   * `seen` records which tours have already auto-played this session, so
+   * navigating back to the Queue does not replay it. Session-only:
+   * localStorage is unavailable here, and a tour suppressed across a reload is
+   * the wrong default for a page a judge opens once.
+   */
+  const [tour, setTour] = useState(null)
+  const [seen, setSeen] = useState({})
+
+  /*
+   * Auto-play, once each.
+   *
+   * The Run tour fires on arrival. The Queue tour waits for `groups` because
+   * two of its three steps point at rows that do not exist until a run has
+   * finished -- spotlighting an empty table would be worse than not running.
+   */
+  /*
+   * ?tour=off suppresses the auto-play. The glyph still works.
+   *
+   * The scrim intercepts pointer events, which is what makes a spotlight a
+   * spotlight and is exactly right for a reader -- but it also means every
+   * automated check has to race a 700ms timer and dismiss a modal before it
+   * can click anything. A supported switch beats sprinkling Escape presses
+   * through the probes and hoping the timing holds.
+   */
+  const autoTourOff =
+    typeof window !== 'undefined' &&
+    new URLSearchParams(window.location.search).get('tour') === 'off'
+
+  useEffect(() => {
+    if (tour || autoTourOff) return
+    if (nav === 'Run' && !seen.Run) {
+      const t = setTimeout(() => {
+        setSeen((s) => ({ ...s, Run: true }))
+        setTour('Run')
+      }, 700)
+      return () => clearTimeout(t)
+    }
+    if (nav === 'Queue' && !seen.Queue && groups.length > 0) {
+      const t = setTimeout(() => {
+        setSeen((s) => ({ ...s, Queue: true }))
+        setTour('Queue')
+      }, 500)
+      return () => clearTimeout(t)
+    }
+  }, [nav, seen, groups.length, tour])
 
   useEffect(() => {
     api('/api/seeds').then((d) => {
@@ -1212,16 +1265,27 @@ export default function App() {
         )}
 
         {/*
-          One sentence per page, below the stat strip where one exists and at
-          the top of the page where it does not. Outside the page's own scroll
-          container on purpose: a reader who scrolls down and gets lost should
-          not have to scroll back up to find out what they are looking at.
+          The replay trigger. Absolutely positioned so it costs the page no
+          height -- the banner it replaced took 46px off the queue and cost up
+          to two visible rows.
         */}
-        <PageBanner
-          page={nav}
-          dismissed={banners[nav]}
-          onDismiss={() => setBanners((b) => ({ ...b, [nav]: true }))}
-        />
+        {(nav === 'Run' || nav === 'Queue') && (
+          <button
+            data-tour-open={nav}
+            onClick={() => setTour(nav)}
+            title="Show me around this page"
+            className="tour-open absolute right-gutter top-3 z-[30]"
+          >
+            <svg width="12" height="12" viewBox="0 0 14 14" aria-hidden="true">
+              <circle cx="7" cy="7" r="6.1" fill="none" stroke="currentColor"
+                      strokeWidth="1.2" />
+              <circle cx="7" cy="4.2" r="0.85" fill="currentColor" />
+              <path d="M7 6.3v4.2" stroke="currentColor" strokeWidth="1.2"
+                    strokeLinecap="round" />
+            </svg>
+            Tour
+          </button>
+        )}
 
         {nav === 'Run' && (
           <RunPanel
@@ -1233,8 +1297,6 @@ export default function App() {
             summary={summary}
             elapsed={elapsed}
             cached={cached}
-            startHereDismissed={startHere}
-            onDismissStartHere={() => setStartHere(true)}
           />
         )}
 
@@ -1330,6 +1392,13 @@ export default function App() {
 
       {auditOpen && (
         <AuditTrail seed={seed} onClose={() => setAuditOpen(false)} />
+      )}
+
+      {tour && (
+        <Tour
+          steps={tour === 'Run' ? runSteps() : queueSteps(summary)}
+          onClose={() => setTour(null)}
+        />
       )}
     </div>
   )

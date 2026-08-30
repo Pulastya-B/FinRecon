@@ -270,6 +270,82 @@ body {
 }
 
 /* --------------------------------------------------------------------------
+   The spotlight tour.
+
+   The scrim is drawn by ONE element: a box positioned over the target with a
+   9999px spread shadow, so everything outside it dims and everything inside
+   stays at full contrast. Four bands would seam at the corners and an SVG mask
+   would need its own coordinate space; this animates between steps for free.
+
+   This is the one place a shadow is doing work rather than decorating, and the
+   one place the page is deliberately obscured -- so it gets a real transition,
+   180ms, which is what separates a spotlight that glides from one that jumps.
+   -------------------------------------------------------------------------- */
+.tour-root {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+}
+
+.tour-spot {
+  position: absolute;
+  border-radius: 6px;
+  box-shadow: 0 0 0 9999px rgba(15, 20, 32, 0.55);
+  outline: 2px solid var(--accent);
+  outline-offset: 0;
+  transition: left 180ms ease-out, top 180ms ease-out,
+              width 180ms ease-out, height 180ms ease-out;
+  pointer-events: none;
+}
+
+/* A step with no target dims the whole page and centres the card. */
+.tour-spot-none {
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  outline: none;
+}
+
+.tour-card {
+  position: fixed;
+  width: 340px;
+  max-width: calc(100vw - 24px);
+  padding: 14px 16px;
+
+  background: var(--n-0);
+  border: 1px solid var(--n-200);
+  border-radius: 6px;
+  /* Above the scrim, which is the only thing between it and the page. */
+  box-shadow:
+    0 1px 2px rgba(15, 20, 32, 0.05),
+    0 8px 24px -8px rgba(15, 20, 32, 0.28);
+}
+
+/* The replay trigger. Small, quiet, top right, and the only thing left on
+   screen once the tour has run itself once. */
+.tour-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px 3px 6px;
+
+  background: var(--n-0);
+  border: 1px solid var(--n-200);
+  border-radius: 999px;
+  color: var(--n-500);
+
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  transition: color 90ms ease-out, border-color 90ms ease-out;
+}
+.tour-open:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* --------------------------------------------------------------------------
    In-page explanation.
 
    Deliberately the quietest surfaces in the interface: --n-25 ground, one
