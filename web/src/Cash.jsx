@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { InfoDot } from './Info.jsx'
 
 /* --------------------------------------------------------------------------
  * The cash position.
@@ -133,6 +134,11 @@ export default function Cash({ seed, onOpenFinding, onOpenTrace }) {
                   <span className="tnum text-body-sm text-n-500">
                     {b.payouts}
                   </span>
+                  {/* Only the two buckets that mean something is wrong. The
+                      other two are self-explanatory from their own labels. */}
+                  {(b.key === 'at_risk' || b.key === 'disputed') && (
+                    <InfoDot id={b.key === 'at_risk' ? 'atRisk' : 'disputed'} />
+                  )}
                 </div>
                 <div className="mt-1 text-[11.5px] leading-[15px] text-n-500">
                   {b.meaning}

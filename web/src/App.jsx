@@ -6,6 +6,7 @@ import EvidencePage from './Evidence.jsx'
 import Ask from './Ask.jsx'
 import Trace from './Trace.jsx'
 import Cash from './Cash.jsx'
+import { InfoDot, PageBanner, StartHere } from './Info.jsx'
 
 async function api(path, options) {
   const res = await fetch(path, {
@@ -201,20 +202,28 @@ const SMALL_PAISE = 1000 * 100
  * screen is context for it.
  */
 function Stats({ summary }) {
+  // `info` names the popover behind each card's glyph. MATCHED is the coverage
+  // figure and INCORRECT is the precision one, so those are the explanations
+  // they carry -- the card label is the number's name, the glyph is what it
+  // means and why it is the one to look at.
   const cells = [
     {
       label: 'Matched',
       value: `${summary.matched.toLocaleString('en-IN')} / ${summary.total_orders.toLocaleString('en-IN')}`,
       tip: TIPS.matched,
+      info: 'coverage',
     },
-    { label: 'Incorrect', value: String(summary.incorrect), tip: TIPS.incorrect, accent: true },
+    { label: 'Incorrect', value: String(summary.incorrect), tip: TIPS.incorrect,
+      accent: true, info: 'precision' },
     {
       label: 'Investigable',
       value: `${summary.groups} items`,
       sub: `${summary.exception_rows} rows`,
       tip: TIPS.investigable,
+      info: 'investigable',
     },
-    { label: 'Unexplained', value: summary.unexplained, tip: TIPS.unexplained },
+    { label: 'Unexplained', value: summary.unexplained, tip: TIPS.unexplained,
+      info: 'unexplained' },
   ]
   return (
     <div className="grid shrink-0 grid-cols-4 gap-3 px-gutter pb-4 pt-4">
@@ -238,6 +247,7 @@ function Stats({ summary }) {
             <Tip text={c.tip} className="shrink-0 text-label uppercase text-n-600">
               {c.label}
             </Tip>
+            <InfoDot id={c.info} />
             {c.sub && <span className="tnum text-body-sm text-n-500">{c.sub}</span>}
           </div>
         </div>
@@ -355,7 +365,7 @@ function Caret({ dir }) {
   )
 }
 
-function SortHeader({ label, tip, sortKey, sort, onSort, align = 'left', width, pad }) {
+function SortHeader({ label, tip, sortKey, sort, onSort, align = 'left', width, pad, info }) {
   const activeKey = sort.key === sortKey
   return (
     <th
@@ -387,6 +397,7 @@ function SortHeader({ label, tip, sortKey, sort, onSort, align = 'left', width, 
           </button>
         )}
       </span>
+      {info && <InfoDot id={info} className="ml-1" />}
     </th>
   )
 }
@@ -461,6 +472,7 @@ function QueueSection({ label, note, rows, max, selected, onSelect, sort, onSort
               onSort={onSort}
               width="w-[118px]"
               pad="px-2"
+              info="evidenceBand"
             />
           </tr>
         </thead>
@@ -821,11 +833,17 @@ function Claim({ figure, label, body }) {
   )
 }
 
-function RunPanel({ seeds, seed, setSeed, onRun, running, summary, elapsed, cached }) {
+function RunPanel({ seeds, seed, setSeed, onRun, running, summary, elapsed, cached,
+                    startHereDismissed, onDismissStartHere }) {
   const current = seeds.find((s) => s.seed === seed)
   return (
     <div className="flex-1 overflow-y-auto px-gutter pb-gutter pt-12">
       <div className="mx-auto max-w-[880px]">
+        <StartHere
+          dismissed={startHereDismissed}
+          onDismiss={onDismissStartHere}
+        />
+
         <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-n-200 bg-n-0 px-3 py-1 text-label uppercase text-n-600">
           <span className="h-[6px] w-[6px] rounded-full bg-accent" />
           Three-way reconciliation
@@ -865,7 +883,7 @@ function RunPanel({ seeds, seed, setSeed, onRun, running, summary, elapsed, cach
             </button>
             {elapsed != null && (
               <span className="text-body-sm text-n-500">
-                {cached ? 'served from cache' : `completed in ${elapsed}s`}
+                {cached ? '' : `completed in ${elapsed}s`}
               </span>
             )}
             <span className="ml-auto text-body-sm text-n-500">
@@ -1040,6 +1058,11 @@ export default function App() {
   // The finding the Ask page is currently about, carried in from the queue.
   const [askSubject, setAskSubject] = useState(null)
   const [auditOpen, setAuditOpen] = useState(false)
+  // Session-only. localStorage is unavailable here, and a banner that stays
+  // dismissed across a reload is the wrong default for a page a judge opens
+  // once anyway.
+  const [banners, setBanners] = useState({})
+  const [startHere, setStartHere] = useState(false)
 
   useEffect(() => {
     api('/api/seeds').then((d) => {
@@ -1188,6 +1211,18 @@ export default function App() {
           <Stats summary={summary} />
         )}
 
+        {/*
+          One sentence per page, below the stat strip where one exists and at
+          the top of the page where it does not. Outside the page's own scroll
+          container on purpose: a reader who scrolls down and gets lost should
+          not have to scroll back up to find out what they are looking at.
+        */}
+        <PageBanner
+          page={nav}
+          dismissed={banners[nav]}
+          onDismiss={() => setBanners((b) => ({ ...b, [nav]: true }))}
+        />
+
         {nav === 'Run' && (
           <RunPanel
             seeds={seeds}
@@ -1198,6 +1233,8 @@ export default function App() {
             summary={summary}
             elapsed={elapsed}
             cached={cached}
+            startHereDismissed={startHere}
+            onDismissStartHere={() => setStartHere(true)}
           />
         )}
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { InfoDot } from './Info.jsx'
 
 /* --------------------------------------------------------------------------
  * The Ask panel.
@@ -75,6 +76,7 @@ function Grounding({ grounding, corrected }) {
           />
           {label}
         </span>
+        <InfoDot id="grounded" />
         <span className="text-body-sm text-n-500">
           {n > 0
             ? `${n} figure${n === 1 ? '' : 's'} traced back to engine output`

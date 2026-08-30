@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { InfoDot } from './Info.jsx'
 
 // Flat fills, no gradient, 4px radius. Severity is carried by hue alone, and
 // the neutral badges draw from the ramp rather than from a fourth grey nobody
@@ -196,8 +197,9 @@ function Arithmetic({ arithmetic, shape }) {
 
   return (
     <div className="rounded-md border border-n-200 bg-n-25 px-5 py-4">
-      <div className="mb-3 text-label uppercase text-n-500">
-        Settlement arithmetic · {n_payments} payments
+      <div className="mb-3 flex items-center gap-1.5 text-label uppercase text-n-500">
+        <span>Settlement arithmetic · {n_payments} payments</span>
+        <InfoDot id="arithmetic" />
       </div>
       <table className="w-full font-mono">
         <tbody>

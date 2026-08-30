@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
+import { InfoDot } from './Info.jsx'
 
 /* --------------------------------------------------------------------------
  * The Evidence page.
@@ -232,6 +233,7 @@ function CrossSeed({ data, heldOut }) {
                 >
                   {heldOut.status}
                 </span>
+                <InfoDot id="heldOut" className="ml-1.5" />
               </td>
               {Object.keys(heldOut.metrics).map((key) => {
                 const v = heldOut.metrics[key]

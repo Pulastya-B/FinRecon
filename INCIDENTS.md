@@ -1303,3 +1303,34 @@ web/src/Evidence.jsx (the waiting row renders values and per-metric gaps),
 README.md (the side-by-side table).
 Verification: invariants, firewall and agent guardrails still pass after the
 reporting changes; finrecon/ shows no modifications.
+
+## [2026-08-30 explain] In-page explanation added; banner costs 0-2 queue rows
+Observed: a reader arriving cold had no way to learn what the numbers on screen
+mean. Added a Start here strip (Run only), one dismissible sentence per page,
+and 10 persistent info glyphs.
+Approach: no tour library and no click-through sequence. A tour fires once, in a
+fixed order, at the moment the reader knows least, and is gone by the time they
+are confused. The glyphs never disappear.
+Change made: web/src/Info.jsx (new -- InfoDot, PageBanner, StartHere, and the
+content), web/src/index.css (.explain-band, .explain-panel, .info-glyph,
+.info-pop -- all --n-25 ground, 1px --n-200, 4px radius, no shadow, accent only
+on the glyph), plus anchor wiring in App.jsx, Detail.jsx, Cash.jsx, Ask.jsx,
+Evidence.jsx. Nothing in finrecon/ or service/ touched.
+The popover positioner is lifted from Tip in App.jsx rather than rewritten:
+portal to <body>, position fixed off the anchor rect, clamp to viewport, flip up
+when below < 190. That component already solved this the hard way -- the column
+tooltips once opened underneath the sidebar.
+Verification: 47 checks at 1280x800. Every one of the 9 popovers renders inside
+the viewport, tested from the leftmost anchor (coverage: L179 R479, viewport
+1280) which is the one that clipped historically. Esc closes each. Dismissing a
+banner leaves queue width, table width and all five column widths byte-identical
+(796/766/[126,114,342,66,118] before and after) with no horizontal scroll. All
+six pages clean at 1280 on all four seeds.
+MEASURED HONESTLY: the queue does NOT fit without scrolling, with or without the
+banner. It did not before this change either -- zero-scroll stopped being a
+requirement in the 2026-08-25 layout session. The banner's actual cost is 46px
+of pane height, which is 0-2 fewer visible rows:
+    1280x800   seed42 12/16 (was 14)   seed7 15/22 (was 16)
+               seed13 15/19 (was 15)   seed21 13/17 (was 14)
+    1440x900   seed42 15/16 (was 16)   seed7 18/22 (was 18)
+               seed13 15/19 (was 17)   seed21 15/17 (was 17)

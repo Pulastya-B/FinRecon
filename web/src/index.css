@@ -269,6 +269,88 @@ body {
   outline-offset: 2px;
 }
 
+/* --------------------------------------------------------------------------
+   In-page explanation.
+
+   Deliberately the quietest surfaces in the interface: --n-25 ground, one
+   hairline border, 4px radius, and NO shadow. Elevation in this project means
+   "this object is above the thing it explains" and is spent on the detail
+   pane; an orientation banner is not that, and giving it a shadow would put it
+   on the same plane as the finding it sits above.
+
+   Accent appears on exactly one thing -- the info glyph -- because that is the
+   only element here that is interactive and needs to be found.
+   -------------------------------------------------------------------------- */
+.explain-band {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+
+  background: var(--n-25);
+  border: 1px solid var(--n-200);
+  border-radius: 4px;
+  padding: 7px 12px;
+
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--n-600);
+}
+
+.explain-panel {
+  background: var(--n-25);
+  border: 1px solid var(--n-200);
+  border-radius: 4px;
+  padding: 12px 14px;
+}
+
+/* The glyph. 13px, accent, and it stays put -- this is the one piece of the
+   explanation that is never dismissed, because the moment a reader needs it is
+   not the moment they arrived. */
+.info-glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  color: var(--n-300);
+  border-radius: 999px;
+  transition: color 90ms ease-out;
+}
+.info-glyph:hover,
+.info-glyph:focus-visible {
+  color: var(--accent);
+}
+.info-glyph-on {
+  color: var(--accent);
+}
+
+.info-pop {
+  position: fixed;
+  z-index: 210;
+  width: 300px;
+  max-width: calc(100vw - 16px);
+  padding: 11px 13px;
+
+  background: var(--n-25);
+  border: 1px solid var(--n-200);
+  border-radius: 4px;
+  /* No shadow, on purpose. See the note above. */
+}
+
+.info-pop-heading {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--n-800);
+  margin-bottom: 5px;
+}
+
+.info-pop-body {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--n-600);
+}
+
 /* The queue scrolls its own body under a header that stays put. Sticky cells
    need their own background or the rows show through them. */
 /* Each section is its own table with its own header, so the column names sit
