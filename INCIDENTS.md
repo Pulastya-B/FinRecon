@@ -1275,3 +1275,31 @@ Coverage is broader than the version that was lost: /api/cash/ and /api/trace/
 did not exist when the original was written and are now included.
 Verification: FIREWALL: INTACT, 12 checks, runs offline except the HTTP section
 which skips cleanly when the service is down.
+
+## [2026-08-29 holdout] Seed 99 run once against the frozen engine
+Observed: seed 99 was generated on 22 August and left sealed. With the engine
+frozen, every suite green and the working tree matching what was pushed, it was
+run exactly once via eval/run_holdout.py.
+Result, beside the development seed:
+    metric                 seed 42 (dev)   seed 99 (held out)     gap
+    coverage                      66.70%               52.40%  -14.30
+    PRECISION                    100.00%              100.00%   +0.00
+    recall                       100.00%              100.00%   +0.00
+    exception accuracy            93.99%               94.54%   +0.54
+    attribution accuracy         100.00%              100.00%   +0.00
+    wrong matches                      0        0 of 524 claims
+Reading: precision, the metric the engine exists to protect, did not move --
+524 claims on unseen data, none wrong. Coverage fell 14.30 points, which is the
+overfitting measurement this dataset was kept for. That figure sits INSIDE the
+47.30-79.50% range the 30-seed sweep had already established, so it reads as a
+harder dataset rather than an engine tuned to seed 42; had precision moved
+instead, the conclusion would have been the opposite.
+Change made: NOTHING in finrecon/. Confirmed by git status after the run --
+touching the engine in response to this number would convert seed 99 into a
+development set and void the result. Only reporting changed:
+eval/run_holdout.py (new, writes cache/evidence/holdout.json),
+eval/build_evidence.py (held_out() reads that file instead of emitting nulls),
+web/src/Evidence.jsx (the waiting row renders values and per-metric gaps),
+README.md (the side-by-side table).
+Verification: invariants, firewall and agent guardrails still pass after the
+reporting changes; finrecon/ shows no modifications.

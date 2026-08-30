@@ -175,17 +175,36 @@ seed 205 and exception accuracy at 68.57% on seed 218. Attribution accuracy is
 reported as 99.26% mean with a 77.78% worst case on seed 206 — not the 100% that
 four hand-picked seeds show. Nothing was dropped for looking bad.
 
-**Seed 99 is held out and has never been scored.** Its metrics have never been
-computed or read, and nothing in the engine was tuned against it. The Evidence
-page carries an empty row for it, waiting to be filled once.
+### The held-out set
 
-> *Full disclosure, because this is exactly the kind of thing this project is
-> otherwise strict about.* The pipeline was run against seed 99 once, on 23
-> August, to generate cached explanation prose — before the held-out discipline
-> was tightened. **No score was computed from that run**, no metric from it was
-> ever read, and nothing was tuned against it. That cache is excluded from this
-> repository. The headline accuracy claim rests on the 30-seed sweep (200–229),
-> which seed 99 plays no part in.
+**Seed 99 was generated on day one, sealed until the engine was frozen, and run
+exactly once.** Nothing was changed afterwards. The moment a held-out set is
+used to fix something it has become a development set, so this is the first and
+only run, published as measured.
+
+| Metric | Seed 42 (development) | **Seed 99 (held out)** | Gap |
+|---|---|---|---|
+| Coverage | 66.70% | **52.40%** | **−14.30** |
+| **Precision** | 100.00% | **100.00%** | **+0.00** |
+| Recall | 100.00% | **100.00%** | +0.00 |
+| Exception accuracy | 93.99% | **94.54%** | +0.54 |
+| Attribution accuracy | 100.00% | **100.00%** | +0.00 |
+| Wrong matches | 0 | **0 of 524 claims** | — |
+
+**Precision did not move.** 524 claims on a dataset the engine had never seen,
+zero of them wrong.
+
+**Coverage fell 14.30 points, and that is the number this dataset existed to
+produce.** It is also the one worth reading carefully: 52.40% sits *inside* the
+47.30–79.50% range the 30-seed sweep had already established, so it reads as a
+harder dataset rather than an engine tuned to seed 42. The metric that would
+have exposed overfitting — precision — is flat to two decimal places.
+
+> *One disclosure, because this project is otherwise strict about them.* The
+> pipeline was run against seed 99 once before this, on 23 August, to generate
+> cached explanation prose — before the held-out discipline was tightened. **No
+> score was computed from that run**, no metric from it was ever read, and
+> nothing was tuned against it. That cache is excluded from this repository.
 
 ---
 
@@ -469,7 +488,7 @@ generator that got the equation wrong.
 | 42 | Development | Debug freely, run a thousand times |
 | 7, 13, 21 | Validation | Run periodically to catch overfitting — burned by design |
 | 200–229 | Breadth sweep | 30 unseen datasets, the headline accuracy claim |
-| **99** | **Held out** | Generated day one. **Never scored** — see the disclosure above. |
+| **99** | **Held out** | Generated day one, sealed, **run once** at freeze. Never re-run. |
 
 If you run seed 99, see a disappointing number, and fix the failures, seed 99 is
 now a development set and its score means nothing. Its entire value comes from

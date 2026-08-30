@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-29T12:05:15+00:00",
+  "generated_at": "2026-08-30T06:57:47+00:00",
   "cross_seed": {
     "source": "eval/sweep_results.csv",
     "seeds": 30,
@@ -2183,14 +2183,25 @@
   "held_out": {
     "seed": "seed99",
     "label": "Seed 99",
-    "status": "held out — not yet scored",
-    "run": false,
+    "status": "held out · run once",
+    "run": true,
+    "run_at": "2026-08-30T06:56:06+00:00",
     "metrics": {
-      "coverage": null,
-      "precision": null,
-      "recall": null,
-      "exception_accuracy": null,
-      "attribution_accuracy": null
-    }
+      "coverage": 0.524,
+      "precision": 1.0,
+      "recall": 1.0,
+      "exception_accuracy": 0.9453781512605042,
+      "attribution_accuracy": 1.0
+    },
+    "gap_vs_dev": {
+      "coverage": -0.14300000000000002,
+      "precision": 0.0,
+      "recall": 0.0,
+      "exception_accuracy": 0.005438211320564212,
+      "attribution_accuracy": 0.0
+    },
+    "wrong_matches": 0,
+    "matches_made": 524,
+    "note": "Seed 99, run once against a frozen engine. Not re-run, not tuned against, published as measured."
   }
 }

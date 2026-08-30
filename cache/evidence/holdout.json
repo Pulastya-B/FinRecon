@@ -1,0 +1,34 @@
+{
+  "run_at": "2026-08-30T06:56:06+00:00",
+  "note": "Seed 99, run once against a frozen engine. Not re-run, not tuned against, published as measured.",
+  "held_out": {
+    "seed": "seed99",
+    "coverage": 0.524,
+    "precision": 1.0,
+    "recall": 1.0,
+    "exception_accuracy": 0.9453781512605042,
+    "attribution_accuracy": 1.0,
+    "matches_made": 524,
+    "correct_matches": 524,
+    "wrong_matches": 0,
+    "exceptions_raised": 476,
+    "total_chains": 1000,
+    "input_rows": 2207,
+    "elapsed_seconds": 4.28
+  },
+  "development": {
+    "seed": "seed42",
+    "coverage": 0.667,
+    "precision": 1.0,
+    "recall": 1.0,
+    "exception_accuracy": 0.93993993993994,
+    "attribution_accuracy": 1.0,
+    "matches_made": 667,
+    "correct_matches": 667,
+    "wrong_matches": 0,
+    "exceptions_raised": 333,
+    "total_chains": 1000,
+    "input_rows": 2222,
+    "elapsed_seconds": 1.92
+  }
+}

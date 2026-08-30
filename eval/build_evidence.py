@@ -370,19 +370,44 @@ def calibration(seeds=LOCAL_SEEDS) -> dict[str, Any]:
 
 # --------------------------------------------------------------------------
 def held_out() -> dict[str, Any]:
-    """The empty slot.
+    """The held-out slot, filled if the one-time run has happened.
 
-    Present, labelled, and null. Building it now means the held-out run is a
-    data-entry change to one JSON file, not a code change to a page under time
-    pressure -- and a slot that is visibly empty is a stronger claim than a
-    row that is merely absent.
+    Built empty first, on purpose: it meant the held-out run was a data-entry
+    change to one JSON file rather than a code change to a page under time
+    pressure. eval/run_holdout.py writes cache/evidence/holdout.json, and this
+    reads it. If the file is absent the row stays empty and labelled, which is
+    a stronger claim than a row that is merely missing.
     """
+    result_file = ROOT / "cache" / "evidence" / "holdout.json"
+    if not result_file.is_file():
+        return {
+            "seed": f"seed{HELD_OUT_SEED}",
+            "label": f"Seed {HELD_OUT_SEED}",
+            "status": HELD_OUT_STATUS,
+            "run": False,
+            "metrics": {key: None for key, _label, _blurb in METRIC_LABELS},
+        }
+
+    payload = json.loads(result_file.read_text(encoding="utf-8"))
+    held, dev = payload["held_out"], payload["development"]
     return {
         "seed": f"seed{HELD_OUT_SEED}",
         "label": f"Seed {HELD_OUT_SEED}",
-        "status": HELD_OUT_STATUS,
-        "run": False,
-        "metrics": {key: None for key, _label, _blurb in METRIC_LABELS},
+        "status": "held out · run once",
+        "run": True,
+        "run_at": payload["run_at"],
+        "metrics": {key: held.get(key) for key, _label, _blurb in METRIC_LABELS},
+        # The gap against the development seed IS the overfitting measurement.
+        # Reported per metric rather than summarised, so the one that moved
+        # cannot hide behind the ones that did not.
+        "gap_vs_dev": {
+            key: (None if held.get(key) is None or dev.get(key) is None
+                  else held[key] - dev[key])
+            for key, _label, _blurb in METRIC_LABELS
+        },
+        "wrong_matches": held.get("wrong_matches"),
+        "matches_made": held.get("matches_made"),
+        "note": payload.get("note", ""),
     }
 
 
