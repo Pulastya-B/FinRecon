@@ -1027,21 +1027,22 @@ function RunPanel({ seeds, seed, setSeed, onRun, running, summary, elapsed, cach
           </div>
         </div>
 
-        <div data-tour="claims" className="grid grid-cols-3 gap-3 pb-4">
+        {/*
+          Two claims, not three. The third was "0 calls at request time", which
+          was true until the Ask page started making live model calls and is
+          not any more. A claim that has been overtaken by the product is worse
+          than no claim -- a judge who finds one stops believing the others.
+        */}
+        <div data-tour="claims" className="grid grid-cols-2 gap-3 pb-4">
           <Claim
             figure="100.00%"
             label="Precision"
-            body="Held across 30 unseen seeds. A wrong match enters the books silently, so the engine refuses rather than guesses."
+            body="Held across 30 unseen seeds, and on a held-out set opened once after the numbers were frozen. A wrong match enters the books silently, so the engine refuses rather than guesses."
           />
           <Claim
             figure="Integer paise"
             label="No float anywhere"
             body="Every amount is an integer count of paise from the CSV to the screen. Float rounding is the exact bug this avoids."
-          />
-          <Claim
-            figure="0 calls"
-            label="At request time"
-            body="Explanations are generated ahead of time and committed. The model writes prose; it never produces or checks a number."
           />
         </div>
       </div>

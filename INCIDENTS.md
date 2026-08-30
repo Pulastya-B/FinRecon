@@ -1418,3 +1418,33 @@ Root cause: an import not added alongside the hook that needed it. Vite builds
 this without complaint; it fails only at runtime.
 Change made: added useRef to the React import.
 Verification: both tour suites pass.
+
+## [2026-08-30 stale-claim] "0 calls at request time" was false after the agent shipped
+Observed: the Run page carried a claim card reading "0 calls / At request time /
+Explanations are generated ahead of time and committed." That was true until
+POST /api/ask began making live model calls, and has been false since.
+Expected: no claim in the demo that the product has overtaken.
+Investigated: grepped for every phrasing. Four live claims and two historical
+log entries.
+  web/src/App.jsx      the claim card                       FALSE  -> removed
+  service/app.py       "Zero LLM calls at request time"     FALSE  -> corrected
+  service/engine.py    "Zero LLM calls, ever"               module-true, but the
+                                                            sentence generalised
+                                                            to "the service"
+                                                            -> scoped to the file
+  README.md            "zero API calls FOR THEM", with the
+                       agent named as the exception in the
+                       next paragraph                       TRUE   -> kept
+  INCIDENTS.md x2      historical entries, accurate when
+                       written                              -> not edited
+Change made: the claims row on the Run page is two cards instead of three; the
+precision card gained the held-out result, which is a stronger claim than the
+one removed and is currently true. The two service docstrings now say the
+reconciliation path makes no model calls and name /api/ask as the single
+deliberate exception.
+Not edited: the two INCIDENTS.md entries. They record what was true on the day
+they were written, and rewriting a log so it agrees with the present is the
+failure this file exists to prevent.
+Verification: no occurrence of the claim survives in any source file or in
+web/dist. Invariants, firewall, agent guardrails, validate, and all three tour
+suites pass.

@@ -17,9 +17,11 @@ Nothing here decides anything. It does not match, re-derive a verdict, or
 alter a decision; it reads what the engine produced and reshapes it for
 display. The UI is a window, not a second opinion.
 
-Zero LLM calls, ever. Explanations come from the committed cache and fall back
-to the deterministic template on a miss, so the service is correct with
-MISTRAL_API_KEY unset and makes no network call at request time.
+No model calls from this module, ever. Explanations come from the committed
+cache and fall back to the deterministic template on a miss, so everything
+served from here is correct with MISTRAL_API_KEY unset and makes no network
+call. The live model lives in service/qa.py, behind POST /api/ask, and nothing
+in this file reaches it.
 """
 
 from __future__ import annotations

@@ -12,9 +12,16 @@ Read-only over the engine. The one thing a browser can write is an entry in
 the audit log, and nothing in the engine ever reads that back. A
 reconciliation decision cannot be altered from the UI.
 
-Zero LLM calls at request time. Explanations are served from the committed
-cache, falling back to the deterministic template, so this runs correctly with
-MISTRAL_API_KEY unset and makes no outbound request while a judge is looking.
+The reconciliation path makes no model calls. Explanations are served from the
+committed cache, falling back to the deterministic template, so the queue, the
+cash position and the Evidence page are correct with MISTRAL_API_KEY unset and
+make no outbound request.
+
+ONE endpoint is different, deliberately: POST /api/ask calls a model live. It
+is given tools that query the engine rather than data to interpret, and every
+figure in its reply is checked against a tool result before the answer leaves
+this process. Without a key that endpoint returns no_api_key and everything
+else carries on unchanged.
 
 Run:
     python -m uvicorn service.app:app --port 8000
