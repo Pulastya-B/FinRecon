@@ -1376,3 +1376,45 @@ sprinkling Escape presses through them, which would have been timing-dependent
 in exactly the way this project keeps getting caught by.
 Verification: both probes pass again; tourcheck.py, which loads the plain URL,
 still sees the tour auto-play.
+
+## [2026-08-30 evidence-tour] Spotlight tour extended to the Evidence page
+Change made: web/src/Tour.jsx gains evidenceSteps(); web/src/Evidence.jsx gains
+four anchors and Panel now forwards a `tour` id rather than callers smuggling
+one in through an absolutely-positioned child. Auto-plays once after the report
+loads (900ms), then behind the same glyph.
+Five steps, ordered as the page's argument rather than its section order: the
+30-seed claim, the ranges behind it, the held-out row, the tolerance sweep, and
+the estimator the engine caught being wrong.
+Figures are hard-coded here, unlike the queue's. That is deliberate and noted in
+the file: this page reads one committed report and does not change with the seed
+selector, so 30 seeds, sd 0.00, the 14.30 gap and the 35x error are fixed
+properties of the artefact. Re-running build_evidence.py against different data
+means re-reading those five sentences.
+Verification: scratchpad/evtour.py at 1280x800 and 1600x1000 -- every step has a
+non-zero spotlight, every card lands inside the viewport, and no card covers the
+element it is describing.
+
+## [2026-08-30 tour-card-height] Card placed below a target then ran off screen
+Observed: the estimator step's card sat at y=539 in an 800px viewport and its
+bottom fell past 800. Clamping it back up then made it cover the spotlight.
+Investigated: placeCard chooses a side using an ASSUMED height of 210px, because
+it runs during render before the card exists. The estimator step's body was four
+lines and the real card was ~250px, so "it fits below" was false when the choice
+was made.
+Root cause: a size guessed and then trusted -- the same mistake that put
+CIRCUMSTANTIAL 6px outside its column.
+Change made: web/src/Tour.jsx measures the rendered card in a layout effect and
+pulls it back inside the viewport when the guess was wrong. The estimator step's
+body was also cut to two sentences, which is the house style the other nine
+steps already followed and removes the marginal case entirely.
+Verification: all five Evidence steps pass both assertions at both widths.
+
+## [2026-08-30 useref] Tour stopped rendering entirely
+Observed: after adding the card measurement, no tour opened on any page --
+both suites timed out waiting for [data-tour-overlay].
+Investigated: the new code called useRef, which Tour.jsx did not import. The
+component threw on render, so the portal never mounted.
+Root cause: an import not added alongside the hook that needed it. Vite builds
+this without complaint; it fails only at runtime.
+Change made: added useRef to the React import.
+Verification: both tour suites pass.

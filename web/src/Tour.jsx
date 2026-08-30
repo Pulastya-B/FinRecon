@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 /* --------------------------------------------------------------------------
@@ -84,6 +84,8 @@ function placeCard(r) {
 export default function Tour({ steps, onClose }) {
   const [i, setI] = useState(0)
   const [box, setBox] = useState(null)
+  const cardRef = useRef(null)
+  const [clampTop, setClampTop] = useState(null)
 
   const step = steps[i]
   const last = i === steps.length - 1
@@ -133,6 +135,28 @@ export default function Tour({ steps, onClose }) {
 
   const card = placeCard(box)
 
+  /*
+   * placeCard picks a side using an ASSUMED card height, because it runs
+   * during render when the card does not exist yet. A step with a long body is
+   * taller than the assumption, and the estimator step ran off the bottom of
+   * an 800px viewport that way. So measure the real thing once it is on screen
+   * and pull it back up if it overflows.
+   *
+   * Guessing a height and then trusting the guess is the same mistake that put
+   * CIRCUMSTANTIAL 6px outside its column.
+   */
+  useLayoutEffect(() => {
+    const el = cardRef.current
+    if (!el || card.bottom !== undefined) {
+      setClampTop(null)
+      return
+    }
+    const h = el.getBoundingClientRect().height
+    const maxTop = window.innerHeight - h - MARGIN
+    setClampTop(card.top > maxTop ? Math.max(MARGIN, maxTop) : null)
+    // card.top is derived from box; depending on it directly would loop.
+  }, [box, i]) // eslint-disable-line react-hooks/exhaustive-deps
+
   return createPortal(
     <div data-tour-overlay="" className="tour-root" onClick={onClose}>
       {/* The hole. One div, one spread shadow: everything outside it is dim,
@@ -153,13 +177,14 @@ export default function Tour({ steps, onClose }) {
       />
 
       <div
+        ref={cardRef}
         data-tour-card=""
         className="tour-card"
         onClick={(e) => e.stopPropagation()}
         style={
           card.bottom !== undefined
             ? { left: card.left, bottom: card.bottom }
-            : { left: card.left, top: card.top }
+            : { left: card.left, top: clampTop ?? card.top }
         }
       >
         <div className="mb-1.5 flex items-baseline justify-between gap-3">
@@ -241,6 +266,74 @@ export function runSteps() {
         'A miss costs a person two minutes. A wrong match is silent and lands ' +
         'in the books. The engine refuses rather than guesses, and that refusal ' +
         'is what the Evidence page measures across 30 datasets it never saw.',
+    },
+  ]
+}
+
+/*
+ * The Evidence page.
+ *
+ * Figures here are hard-coded, unlike the queue's. That is not an oversight:
+ * this page reads one committed report and does not change with the seed
+ * selector, so 30 seeds, sd 0.00, the 14.30 gap and the 35x estimator error
+ * are fixed properties of the artefact. If build_evidence.py is ever re-run
+ * against different data these five sentences have to be re-read, and the
+ * comment is here to say so.
+ *
+ * The order is the argument the page makes, not the order the sections sit in:
+ * the claim, the honesty of the claim, the held-out test of it, then the two
+ * places the engine was measured against itself.
+ */
+export function evidenceSteps() {
+  return [
+    {
+      target: '[data-tour="ev-headline"]',
+      eyebrow: 'The objection',
+      title: 'Thirty datasets the engine had never seen',
+      body:
+        'A result on one dataset proves the dataset was chosen well. These are ' +
+        '30 generated fresh and never looked at during development, and ' +
+        'precision came back identical on every one — a standard deviation of ' +
+        '0.00, not a mean of near-misses.',
+    },
+    {
+      target: '[data-tour="ev-ranges"]',
+      eyebrow: 'The honesty',
+      title: 'Ranges, not best case',
+      body:
+        'Every seed the sweep produced is in this table, including the ones ' +
+        'that went worst — coverage bottoms out at 47.30% and exception ' +
+        'accuracy at 68.57%, each with the seed named. Nothing was dropped for ' +
+        'looking bad.',
+    },
+    {
+      target: '[data-held-out]',
+      eyebrow: 'The held-out set',
+      title: 'Seed 99, sealed on day one, run once',
+      body:
+        'Generated before the engine existed and opened only after the numbers ' +
+        'were frozen. Precision did not move — 524 claims, zero wrong. ' +
+        'Coverage fell 14.30 points, which is what a held-out set exists to ' +
+        'expose, and it still lands inside the range the 30 seeds established.',
+    },
+    {
+      target: '[data-tour="ev-tolerance"]',
+      eyebrow: 'The tuning',
+      title: 'Widening the band buys nothing',
+      body:
+        'Drag it. From 2 paise to ₹100 — a 5,000× widening — coverage and ' +
+        'precision do not move at all. Past that they move together: every ' +
+        'extra order the wider band matches is matched wrongly, so the engine ' +
+        'buys coverage only by guessing.',
+    },
+    {
+      target: '[data-tour="ev-estimator"]',
+      eyebrow: 'Checking itself',
+      title: 'It caught its own estimator being wrong',
+      body:
+        'The formula for how often a match fits by chance assumed amounts ' +
+        'spread evenly. Measured against the real distribution it was 35× ' +
+        'optimistic — so 9 of 13 attributions dropped to REFUSE.',
     },
   ]
 }

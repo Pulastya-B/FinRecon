@@ -7,7 +7,7 @@ import Ask from './Ask.jsx'
 import Trace from './Trace.jsx'
 import Cash from './Cash.jsx'
 import { InfoDot } from './Info.jsx'
-import Tour, { runSteps, queueSteps } from './Tour.jsx'
+import Tour, { runSteps, queueSteps, evidenceSteps } from './Tour.jsx'
 
 async function api(path, options) {
   const res = await fetch(path, {
@@ -1115,6 +1115,15 @@ export default function App() {
       }, 500)
       return () => clearTimeout(t)
     }
+    // Evidence fetches its report on mount; 900ms is after that lands, and
+    // every step here points at something the report renders.
+    if (nav === 'Evidence' && !seen.Evidence) {
+      const t = setTimeout(() => {
+        setSeen((s) => ({ ...s, Evidence: true }))
+        setTour('Evidence')
+      }, 900)
+      return () => clearTimeout(t)
+    }
   }, [nav, seen, groups.length, tour])
 
   useEffect(() => {
@@ -1269,7 +1278,7 @@ export default function App() {
           height -- the banner it replaced took 46px off the queue and cost up
           to two visible rows.
         */}
-        {(nav === 'Run' || nav === 'Queue') && (
+        {(nav === 'Run' || nav === 'Queue' || nav === 'Evidence') && (
           <button
             data-tour-open={nav}
             onClick={() => setTour(nav)}
@@ -1396,7 +1405,13 @@ export default function App() {
 
       {tour && (
         <Tour
-          steps={tour === 'Run' ? runSteps() : queueSteps(summary)}
+          steps={
+            tour === 'Run'
+              ? runSteps()
+              : tour === 'Evidence'
+              ? evidenceSteps()
+              : queueSteps(summary)
+          }
           onClose={() => setTour(null)}
         />
       )}

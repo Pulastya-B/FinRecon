@@ -50,8 +50,12 @@ const TH =
   'h-[30px] px-3 text-label uppercase text-n-600 bg-n-50 border-b border-n-200'
 const TD = 'h-[34px] px-3 text-body-sm border-b border-b-n-100'
 
-function Panel({ children, className = '' }) {
-  return <div className={`panel overflow-hidden ${className}`}>{children}</div>
+function Panel({ children, className = '', tour }) {
+  return (
+    <div data-tour={tour} className={`panel overflow-hidden ${className}`}>
+      {children}
+    </div>
+  )
 }
 
 /* --------------------------------------------------------------------------
@@ -66,7 +70,7 @@ function CrossSeed({ data, heldOut }) {
         figure on this page that deserves display size. Thirty datasets the
         engine had never seen, and the number that matters did not move.
       */}
-      <div className="mb-4 grid grid-cols-3 gap-3">
+      <div data-tour="ev-headline" className="mb-4 grid grid-cols-3 gap-3">
         <div
           className="panel px-5 py-4 ring-1 ring-inset ring-accent/25"
           style={{ background: 'var(--accent-bg)' }}
@@ -100,7 +104,7 @@ function CrossSeed({ data, heldOut }) {
         </div>
       </div>
 
-      <Panel>
+      <Panel tour="ev-ranges">
         <table className="w-full table-fixed border-separate border-spacing-0">
           <thead>
             <tr>
@@ -488,6 +492,7 @@ function Tolerance({ data }) {
       </div>
 
       <Panel className="p-panel">
+        <div data-tour="ev-tolerance">
         <div className="mb-4 flex flex-wrap items-end gap-x-8 gap-y-3">
           <div>
             <div className="text-label uppercase text-n-600">
@@ -551,6 +556,7 @@ function Tolerance({ data }) {
         <div className="mt-1 flex justify-between text-body-sm text-n-500">
           <span>{money(grid[0])}</span>
           <span>{money(grid[grid.length - 1])}</span>
+        </div>
         </div>
 
         <div className="mt-4">
@@ -727,7 +733,7 @@ function Subset({ data }) {
         Analytic estimate vs measured
       </h3>
       {h && (
-        <div className="mb-3 rounded-lg border border-warn/30 bg-warn/[0.06] px-5 py-4">
+        <div data-tour="ev-estimator" className="mb-3 rounded-lg border border-warn/30 bg-warn/[0.06] px-5 py-4">
           <div className="text-body leading-relaxed text-n-800">
             At {h.level}, searching{' '}
             <span className="tnum font-semibold text-n-900">
