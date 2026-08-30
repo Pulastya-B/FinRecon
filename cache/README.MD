@@ -1,0 +1,3 @@
+Queue explanations are generated once and committed so the hosted demo makes zero API calls and cannot fail on a rate limit or a missing key. Each file is keyed by record_hash — a hash of the underlying facts, not the prose — so changing any figure invalidates the entry and forces regeneration. Files marked source: template fell back after failing number or wording verification; rejected_tokens records what was refused.
+
+**The Ask agent is not cached. It calls the model live on every question and returns an error without a key.**

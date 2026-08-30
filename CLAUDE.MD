@@ -14,7 +14,16 @@ invalidates the held-out seed comparison.
 
 ## Seeds
 - data/seed42 = development. Debug freely.
-- data/seed99 = HELD OUT. Do not run against it. Do not read it.
+- data/seed99 = was held out. SPENT on 30 Aug 2026: run once against a frozen
+  engine, scored, and published (coverage 52.40%, precision 100.00% on 524
+  claims, recall 100%, attribution 100%). It is now a normal servable dataset
+  and appears in /api/seeds labelled "HELD OUT, scored 30 Aug".
+  Its value as a held-out set is gone and cannot be restored, so:
+  - Do NOT tune anything against it. Never change a rule, threshold or
+    published number because of what seed 99 shows.
+  - Do NOT re-seal it. Hiding a dataset whose result is already on the
+    Evidence page reads as concealment, not discipline.
+  - A NEW held-out seed must be freshly generated and never run.
 
 ## ground_truth.json
 - Readable ONLY by eval/. The matcher must never open it.

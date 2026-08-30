@@ -48,9 +48,19 @@ from finrecon.money import format_inr
 from finrecon.normalize import load
 from finrecon.pipeline import reconcile
 
-# Seed 99 is held out. It is excluded here rather than filtered in the route,
-# so no endpoint can reach it by construction.
-HELD_OUT_SEEDS = frozenset({99})
+# Seeds that are SEALED: excluded here rather than filtered in a route, so no
+# endpoint can reach one by construction. Empty since 30 August -- seed 99 was
+# the only member and it has now been scored.
+SEALED_SEEDS: frozenset[int] = frozenset()
+
+# Seeds that were sealed and have since been scored, once, against a frozen
+# engine. These ARE served, but labelled with what they are so a judge reads
+# the provenance in the dropdown rather than discovering it afterwards.
+# Serving them is the honest position now that the result is published on the
+# Evidence page: a dataset kept unreachable after its numbers are public reads
+# as concealment, not as discipline. The seal did its job -- it made it
+# impossible to run seed 99 before the comparison was made.
+SCORED_HELD_OUT = {99: "HELD OUT, scored 30 Aug"}
 
 # Verdicts that put something in the queue. MATCHED is not one of them.
 EXCEPTION_OUTCOMES = frozenset({
@@ -80,7 +90,7 @@ _audit: list[Decision] = []
 # Seeds
 # --------------------------------------------------------------------------
 def available_seeds() -> list[dict[str, Any]]:
-    """Datasets on disk, with row counts. Never includes a held-out seed."""
+    """Datasets on disk, with row counts. Never includes a sealed seed."""
     out = []
     for path in sorted((ROOT / "data").glob("seed*")):
         if not path.is_dir():
@@ -90,13 +100,18 @@ def available_seeds() -> list[dict[str, Any]]:
             number = int(name.replace("seed", ""))
         except ValueError:
             continue
-        if number in HELD_OUT_SEEDS:
+        if number in SEALED_SEEDS:
             continue
         ledgers = load(path)
         counts = ledgers.counts()
+        scored = SCORED_HELD_OUT.get(number)
         out.append({
             "seed": name,
-            "label": f"Seed {number}",
+            "label": f"Seed {number} — {scored}" if scored else f"Seed {number}",
+            # A flag, not a label the UI has to parse. The Run page keys its
+            # provenance note off this, so changing the wording above can never
+            # silently stop the note from appearing.
+            "held_out": scored is not None,
             "orders": counts["orders"],
             "payments": counts["payments"],
             "settlements": counts["settlements"],
@@ -107,14 +122,14 @@ def available_seeds() -> list[dict[str, Any]]:
 
 
 def _seed_dir(seed: str) -> Path:
-    """Resolve a seed name to a directory, refusing held-out seeds."""
+    """Resolve a seed name to a directory, refusing sealed seeds."""
     name = seed if seed.startswith("seed") else f"seed{seed}"
     try:
         number = int(name.replace("seed", ""))
     except ValueError as exc:
         raise KeyError(f"unknown seed {seed!r}") from exc
-    if number in HELD_OUT_SEEDS:
-        raise KeyError(f"seed {number} is held out and is not served")
+    if number in SEALED_SEEDS:
+        raise KeyError(f"seed {number} is sealed and is not served")
     path = ROOT / "data" / name
     if not path.is_dir():
         raise KeyError(f"unknown seed {seed!r}")

@@ -1,0 +1,10 @@
+{
+  "group_id": "AMOUNT_VARIANCE_UNEXPLAINED__setl_20260709_007",
+  "code": "AMOUNT_VARIANCE_UNEXPLAINED",
+  "record_hash": "ffedb35bb09bd2551c22c4e0c4854526",
+  "prose": "Payout of 9 July is short \u20b91,553.00.\nThe bank credited \u20b91,30,409.70 against an expected \u20b91,31,962.70. 23 orders sit in this payout. This is consistent with refund rfnd_000004 of \u20b91,553.00, issued 24 July against payment pay_000073. Refunds are deducted from the cycle that processes them, not the cycle of the original sale, so a payout can be reduced by a refund against a much earlier purchase.\nSuggested action: verify rfnd_000004 in the refund report and confirm it was deducted from this payout. The amounts match, which is not proof of cause -- rfnd_000004 is booked to another cycle, so the link is not confirmed.",
+  "source": "template",
+  "provider": "null",
+  "rejected_tokens": [],
+  "generated_at": "2026-08-31T00:25:35"
+}

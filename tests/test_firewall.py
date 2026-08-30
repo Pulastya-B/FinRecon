@@ -126,17 +126,50 @@ else:
             leaked.append(path)
     check("no path serves ground truth", not leaked, str(leaked))
 
-    # The held-out seed must be unreachable by construction, not by filtering.
-    for route in ("/api/exceptions/seed99", "/api/cash/seed99",
-                  "/api/data/seed99/orders", "/api/trace/seed99/setl_1"):
+    # Seed 99 is served as of 30 August, once it had been scored and the result
+    # published. What must NEVER be served is its answer key -- and now that its
+    # CSVs are reachable, that is a stronger property than the old "seed 99 is
+    # 404" check, not a weaker one. This is the check that replaced it.
+    gt99 = ROOT / "data" / "seed99" / "ground_truth.json"
+    needle99 = json.dumps(json.loads(gt99.read_text(encoding="utf-8")))[:60]
+    leaked99 = []
+    for path in (
+        "/../../data/seed99/ground_truth.json",
+        "/api/data/seed99/ground_truth",
+        "/data/seed99/ground_truth.json",
+        "/%2e%2e/%2e%2e/data/seed99/ground_truth.json",
+    ):
         try:
-            with urllib.request.urlopen(BASE + route, timeout=15) as r:
+            with urllib.request.urlopen(BASE + path, timeout=15) as r:
+                body = r.read().decode("utf-8", "replace")
+        except Exception as exc:
+            body = str(exc)
+        if needle99[:40] in body:
+            leaked99.append(path)
+    check("no path serves seed 99's ground truth", not leaked99, str(leaked99))
+
+    # And it must not appear in the table listing either, which is how a
+    # browser would discover it without guessing a filename.
+    try:
+        with urllib.request.urlopen(BASE + "/api/data/seed99", timeout=15) as r:
+            tables = r.read().decode("utf-8", "replace")
+    except Exception as exc:
+        tables = str(exc)
+    check("seed 99's table list omits ground_truth",
+          "ground_truth" not in tables, tables[:120])
+
+    # Seed 99 IS reachable now. Asserted so that re-sealing it silently, or
+    # breaking it, shows up here rather than as an empty page in a demo.
+    for route in ("/api/exceptions/seed99", "/api/cash/seed99",
+                  "/api/data/seed99/orders"):
+        try:
+            with urllib.request.urlopen(BASE + route, timeout=60) as r:
                 code = r.status
         except urllib.error.HTTPError as exc:
             code = exc.code
         except Exception:
             code = -1
-        check(f"seed 99 is not served: {route}", code == 404, f"HTTP {code}")
+        check(f"seed 99 is served: {route}", code == 200, f"HTTP {code}")
 
 print()
 if fails:

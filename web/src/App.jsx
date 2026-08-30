@@ -879,7 +879,9 @@ function RunPanel({ seeds, seed, setSeed, onRun, running, summary, elapsed, cach
             >
               {seeds.map((s) => (
                 <option key={s.seed} value={s.seed}>
-                  {s.label} — {s.total_rows.toLocaleString('en-IN')} rows
+                  {/* Dot, not a dash: seed 99's label carries its own em dash
+                      and two in one option read as a broken sentence. */}
+                  {s.label} · {s.total_rows.toLocaleString('en-IN')} rows
                 </option>
               ))}
             </select>
@@ -929,6 +931,31 @@ function RunPanel({ seeds, seed, setSeed, onRun, running, summary, elapsed, cach
             this problem lives in that last hop.
           </p>
         </div>
+
+        {/*
+          Provenance note for a seed that was held out and has since been
+          scored. Keyed off the server's held_out flag rather than the label
+          text, so rewording the dropdown can never silently drop the note.
+          It sits above the results because it is the frame those results are
+          read in, not a footnote to them.
+        */}
+        {current?.held_out && (
+          <div
+            data-held-out-note=""
+            className="mb-4 rounded border border-n-200 border-l-2 border-l-warn bg-n-25 p-panel"
+          >
+            <div className="mb-1.5 text-label uppercase text-warn">
+              Held out until 30 August
+            </div>
+            <p className="max-w-[72ch] text-body-sm leading-relaxed text-n-600">
+              This dataset was generated on day one and never scored until 30
+              August, after the engine was frozen. Coverage is 14.30 points
+              lower than the development seed — inside the 47.30–79.50% range
+              the 30-seed sweep had already established. The engine has not
+              been changed since.
+            </p>
+          </div>
+        )}
 
         {summary && (
           <div className="panel mb-4 p-panel">
@@ -1061,6 +1088,9 @@ export default function App() {
   const [groups, setGroups] = useState([])
   const [selected, setSelected] = useState(null)
   const [detail, setDetail] = useState(null)
+  // Which seed the loaded queue actually came from. Not derivable from `seed`,
+  // which changes the moment the dropdown does -- before anything is re-run.
+  const [loadedSeed, setLoadedSeed] = useState(null)
   const [decisions, setDecisions] = useState({})
   const [dataTarget, setDataTarget] = useState(null)
   // The id whose decline trace is open, or null. Lives at the top because
@@ -1135,6 +1165,19 @@ export default function App() {
     })
   }, [])
 
+  // Switching datasets invalidates everything the last run produced. A group
+  // id belongs to ONE seed, so leaving it selected re-fetched it against the
+  // new seed and 404'd; leaving the queue up showed one seed's findings under
+  // another seed's name. Both were reachable only by switching seeds, which
+  // nobody did until seed 99 became selectable. Cleared here rather than in
+  // the dropdown handler so the /data/<seed>/<table> deep link is covered too.
+  useEffect(() => {
+    setSummary(null)
+    setGroups([])
+    setSelected(null)
+    setDetail(null)
+  }, [seed])
+
   const run = async () => {
     setRunning(true)
     try {
@@ -1151,6 +1194,7 @@ export default function App() {
       // arithmetic block was not on screen until you clicked something else.
       const first = q.groups.filter((g) => g.kind !== 'orders')[0] ?? q.groups[0]
       setSelected(first?.group_id ?? null)
+      setLoadedSeed(seed)
       setNav('Queue')
     } finally {
       setRunning(false)
@@ -1159,8 +1203,15 @@ export default function App() {
 
   useEffect(() => {
     if (!selected) return setDetail(null)
+    // Only fetch a finding that belongs to the CURRENT seed's queue. Clearing
+    // `selected` and `groups` on a seed change is not enough on its own: those
+    // clears land on the NEXT render, so for one pass this effect still saw the
+    // old id beside the new seed and asked the server for a group that seed has
+    // never had. Comparing against the seed the queue was loaded from is the
+    // only check that is already true at the moment this runs.
+    if (loadedSeed !== seed) return
     api(`/api/exceptions/${seed}/${encodeURIComponent(selected)}`).then(setDetail)
-  }, [selected, seed])
+  }, [selected, seed, loadedSeed])
 
   const decide = async (groupId, action, note) => {
     const r = await api(

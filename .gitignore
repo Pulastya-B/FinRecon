@@ -19,14 +19,11 @@ venv/
 # never cleans it up; it is a byte-comparison target, not data.
 data/_determinism_check/
 
-# Seed 99's explanation cache. The pipeline was run against seed 99 once on
-# 23 Aug to generate template prose, before the held-out discipline was
-# tightened. Those files carry seed 99's real exception groups, the service
-# refuses to serve seed 99 anyway, and publishing them would sit badly beside
-# a README that calls seed 99 unscored. Kept locally, excluded here.
-cache/explanations/seed99/
-
 # NOT ignored, deliberately:
+#   cache/explanations/seed99/  was excluded while seed 99 was sealed and the
+#                         README called it unscored. It was scored on 30 Aug
+#                         and the result is published, so the cache that makes
+#                         its queue render offline ships with it.
 #   cache/explanations/   committed on purpose, so the hosted demo makes zero
 #                         API calls -- no quota burn, no rate limit mid-review
 #   data/seed42/          the development dataset is the artefact

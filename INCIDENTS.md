@@ -1448,3 +1448,91 @@ failure this file exists to prevent.
 Verification: no occurrence of the claim survives in any source file or in
 web/dist. Invariants, firewall, agent guardrails, validate, and all three tour
 suites pass.
+
+## [2026-08-30 mermaid-unreadable] README diagrams render at 3.5px on GitHub
+Observed: the "What it does" flowchart has an intrinsic width of 3849px. GitHub
+lays markdown out in a ~700-830px column and applies max-width:100% to the SVG,
+so the diagram is displayed at 0.22x and its 16px labels land at 3.5px. Three of
+the four diagrams were affected: 3849px, 2081px, 1153px.
+Expected: labels legible at the width GitHub actually gives the diagram.
+Investigated: built scratchpad mermaidsize.py, which renders each ```mermaid
+fence in headless Chromium and reports intrinsic width, scale at the column, and
+effective font size. Confirmed the three widths above. Then measured candidate
+rewrites; then rendered them to PNG and looked at them.
+Root cause: shape, not font. Width is set by the number of ranks, so a
+`flowchart LR` chain of seven tiers is eight ranks wide regardless of label
+length. Turning the long chains vertical removes the horizontal span.
+Three secondary findings, each of which broke a candidate:
+  - mermaid re-wraps HTML labels at its own wrappingWidth and IGNORES <br/>,
+    which orphaned words ("2,222 / rows") and split the file list mid-entry.
+    Fixed by setting flowchart.wrappingWidth per diagram.
+  - subgraph `direction` is ignored when an edge crosses the subgraph boundary
+    (member-to-member); honoured when edges attach to the subgraph itself. Two
+    candidates laid out wrong because of this and were discarded.
+  - a two-way M-->T / T-->M edge pair rendered its two labels on top of each
+    other in the agent diagram. Replaced with a single `<-->` edge, one label.
+Change made: README.md only, four mermaid blocks. Diagram 1 and 3 LR -> TB;
+diagram 1's six source nodes collapsed into one labelled node; diagram 4 TD ->
+TB with the tool loop as a single bidirectional edge; per-diagram init directive
+setting rankSpacing, nodeSpacing and wrappingWidth. No content dropped: the 12
+tool names, the five claim types and all eight loop steps are still shown, and
+the six row counts were re-verified against data/seed42 (1000/985/102/10/46/79,
+sum 2,222).
+Verification: mermaidsize.py reports 4/4 diagrams at >= 14px worst case (three
+at a full 16px), measured against BOTH mermaid 10 and 11 because GitHub picks
+the version and the two differ by more than the fix is worth -- the same diagram
+is 490x1182 under 11 and 652x676 under 10. Each diagram also rendered to PNG and
+inspected by eye; the width check alone passed the ugly-wrapping and
+overlapping-label versions, so it is not sufficient on its own. tests/
+test_invariants.py and eval/validate.py --data data/seed42 both pass; no file
+outside README.md changed.
+
+## [2026-08-31 seed99-served] serving seed 99 crashed on an exception type seed 42 does not have
+Observed: engine.get_run("seed99") raised IncompleteExplanation:
+"TIMING_PENDING__setl_20260817_044: empty slot near 'is short .'". The whole
+run failed, so Queue, Cash, Ask and Data all 500'd for seed 99.
+Expected: a queue of 22 findings.
+Investigated: rendered every prose group of every seed through template_for.
+seed42 16/16 ok, seed7 22/22, seed13 19/19, seed21 17/17, seed99 21/22.
+Counted outcomes per seed: seed 42 has NO TIMING_PENDING group at all, and no
+cache anywhere held one, so this template path had never executed.
+Root cause: finrecon/explain.py had no TIMING_PENDING branch. The generic
+settlement fallback below it opens "Payout of <date> is short <amount>" and
+"The bank credited <amount> against an expected <amount>", but a payout that is
+merely early has no credit and no shortfall -- both slots formatted to nothing
+and assert_complete correctly refused to ship the result. The guard worked; the
+branch was missing. Affects the 4-of-30 sweep seeds that carry TIMING_PENDING
+too, so this was latent, not specific to seed 99.
+Change made (authorised explicitly, after asking, because the standing
+instruction was to change no engine code in response to seed 99):
+  finrecon/explain.py   new TIMING_PENDING branch beside MISSING_IN_BANK
+  service/engine.py     HELD_OUT_SEEDS -> SEALED_SEEDS (now empty) plus
+                        SCORED_HELD_OUT; seeds carry a held_out flag
+  web/src/App.jsx       amber-railed provenance note, keyed off held_out
+  tests/test_firewall.py  "seed 99 is 404" replaced by "seed 99's ground truth
+                        is unreachable while its CSVs are served"
+  .gitignore, CLAUDE.md  seed 99 is spent, not sealed
+No threshold, rule or published number was touched.
+Second defect, found by the same probe: switching seeds re-fetched the finding
+selected on the previous seed, producing
+404 /api/exceptions/seed42/MISSING_IN_BANK__setl_20260722_019. Pre-existing but
+unreachable until seed 99 made seed-switching a normal demo action. First two
+fixes failed because clearing `selected` and `groups` in a [seed] effect lands
+on the NEXT render, so the detail effect still saw the old id beside the new
+seed in the same pass. Fixed by tracking loadedSeed -- the seed the queue was
+actually loaded from -- and refusing to fetch when it disagrees with `seed`.
+Third defect, in the probe itself: it asserted "0 incorrect" against innerText
+that is "0\nINCORRECT", because the stat card renders figure and label as
+separate elements and CSS uppercases the label. Same mistake logged twice
+before. Fixed by normalising whitespace and matching the DOM's actual shape.
+Cache: seed 99's 13 committed explanation files were generated 23 Aug and not
+one key matched a current group, so every group fell through to the template.
+Regenerated offline: 22 groups, 0 API calls, 0 number-check rejections.
+Verification: seed 99 reproduces the published figures exactly -- coverage
+52.40%, precision 100.00%, 524 correct, 0 wrong, exception accuracy 450/476 =
+94.54%, attribution 9/9 = 100%. seed 42 unchanged at 667/667, 100.00%.
+invariants, firewall, agent guardrails and validate (both seeds) all pass. All
+12 agent tools resolve seed-99 entities and a live ask returned a grounded
+answer. Browser probe: six pages render, the note appears on seed 99 only and
+survives a run, the TIMING_PENDING finding shows in the queue, no uncaught JS
+errors. Screenshot at docs/screenshots/run_seed99.png.

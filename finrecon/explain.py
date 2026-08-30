@@ -710,6 +710,26 @@ def template_for(group: ExceptionGroup) -> str:
         action = ORDER_SIDE_ACTIONS[group.code]
         return assert_complete(rendered + "\n" + action, group)
 
+    # TIMING_PENDING has no credit and no shortfall -- nothing has arrived yet,
+    # so there is no variance to state. It needs its own branch for the same
+    # reason MISSING_IN_BANK does: the payout template below opens with "is
+    # short <amount>", and a payout that is merely early is not short anything.
+    # Without this it fell through and rendered "is short ." and "credited
+    # against an expected X", which assert_complete correctly refused to ship.
+    # Seed 42 has no TIMING_PENDING group, so this path never ran until the
+    # held-out seed was served; it occurs on 4 of the 30 sweep seeds too.
+    if group.code == "TIMING_PENDING":
+        return (
+            f"Payout {f.get('payout_id', '')} of "
+            f"{f.get('payout_date', 'unknown date')} has not been credited yet.\n"
+            f"The gateway released {f.get('expected_amount', 'an unknown amount')}, "
+            f"and no bank credit for it appears in the statement — but the payout "
+            f"is still inside its clearing window, so it is early rather than "
+            f"missing. {orders} sit in this payout.\n"
+            f"Suggested action: no action yet. Re-check once the clearing window "
+            f"has closed, and treat it as missing only then."
+        )
+
     if group.code == "MISSING_IN_BANK":
         return (
             f"Payout {f.get('payout_id', '')} of {f.get('payout_date', 'unknown date')} "

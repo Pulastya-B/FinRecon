@@ -1,0 +1,10 @@
+{
+  "group_id": "TIMING_PENDING__setl_20260817_044",
+  "code": "TIMING_PENDING",
+  "record_hash": "2ad4e16a679f3bfdf57c8db447f9d935",
+  "prose": "Payout setl_20260817_044 of 17 August has not been credited yet.\nThe gateway released \u20b91,19,573.95, and no bank credit for it appears in the statement \u2014 but the payout is still inside its clearing window, so it is early rather than missing. 25 orders sit in this payout.\nSuggested action: no action yet. Re-check once the clearing window has closed, and treat it as missing only then.",
+  "source": "template",
+  "provider": "null",
+  "rejected_tokens": [],
+  "generated_at": "2026-08-31T00:25:35"
+}
