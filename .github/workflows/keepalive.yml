@@ -1,0 +1,41 @@
+# Keeps the Render free instance awake during judging.
+#
+# A free instance sleeps after ~15 minutes idle and takes 50-60 seconds to wake,
+# which is the first thing a judge would experience. This pings /api/health
+# often enough that it never sleeps.
+#
+# Two things to know rather than discover:
+#   - GitHub throttles scheduled workflows on repositories with no recent
+#     pushes, and cron here is best-effort, not guaranteed to the minute. If the
+#     repo goes quiet for 60 days the schedule is disabled entirely.
+#   - Render's free-tier terms discourage artificial keep-alive. This is a
+#     measure for a judging window, not a permanent arrangement -- delete this
+#     file, or disable the workflow, once the demo has been judged.
+#
+# Set RENDER_URL first: Settings > Secrets and variables > Actions > Variables.
+# It is a variable, not a secret: the URL is public and masking it in logs would
+# only make a failure harder to read.
+
+name: keepalive
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:      # so it can be triggered by hand to warm the instance
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping health endpoint
+        run: |
+          if [ -z "${{ vars.RENDER_URL }}" ]; then
+            echo "RENDER_URL is not set -- add it as a repository variable."
+            exit 1
+          fi
+          # --fail so an HTTP error is a failed run rather than a silent pass;
+          # --max-time 90 because a sleeping instance legitimately takes ~60s to
+          # wake and that is a success, not a timeout.
+          curl --fail --silent --show-error --max-time 90 \
+            "${{ vars.RENDER_URL }}/api/health" -o /dev/null
+          echo "awake"

@@ -3,3 +3,9 @@ pyyaml>=6.0
 rapidfuzz>=3.0
 fastapi>=0.115
 uvicorn[standard]>=0.30
+
+# Only the Ask agent calls out. Imported lazily in service/qa.py and
+# finrecon/explain.py, so the engine, the queue and the Evidence page all work
+# with this absent -- but it was absent from THIS FILE while being imported,
+# which meant a deployment with MISTRAL_API_KEY set would 500 the Ask page.
+mistralai>=1.10

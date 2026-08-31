@@ -290,10 +290,18 @@ def ask(seed: str, body: Question):
 
 @app.get("/api/ask/{seed}/suggested")
 def suggested(seed: str):
+    # _client() constructs the provider, so a missing or broken SDK raises here
+    # -- on the request that renders the Ask page. Degrade to the no-key state,
+    # which the UI already reports plainly, rather than 500ing the whole page
+    # over a dependency problem the other five pages do not care about.
+    try:
+        key_present = qa._client() is not None
+    except Exception:
+        key_present = False
     return {"questions": qa.SUGGESTED,
             "questions_for_subject": qa.SUGGESTED_FOR_SUBJECT,
             "model": qa.MODEL,
-            "key_present": qa._client() is not None}
+            "key_present": key_present}
 
 
 # --------------------------------------------------------------------------

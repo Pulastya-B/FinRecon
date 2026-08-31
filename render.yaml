@@ -1,0 +1,36 @@
+# Render Blueprint. Render > New > Blueprint > point at this repo.
+#
+# This app is one process serving both the API and the built frontend, which is
+# why it is hosted here rather than on a serverless platform. service/engine.py
+# keeps the per-seed run cache and the operator audit log in module-level
+# memory; on ephemeral functions both evaporate between requests, so recorded
+# decisions would stop persisting and the queue burn-down would silently break.
+# A long-lived instance is a requirement, not a preference.
+#
+# No build step for the frontend: web/dist is committed, and service/app.py
+# mounts it. pip install is the whole build.
+
+services:
+  - type: web
+    name: finrecon
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+
+    # Two load-bearing details.
+    #   --host 0.0.0.0  uvicorn binds 127.0.0.1 by default, which Render cannot
+    #                   route to; the service would deploy green and refuse
+    #                   every request.
+    #   --port $PORT    Render assigns the port. A hardcoded 8000 fails.
+    startCommand: uvicorn service.app:app --host 0.0.0.0 --port $PORT
+
+    healthCheckPath: /api/health
+
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+      # sync: false means "prompt for this in the dashboard, never store it in
+      # the repo". The Ask agent is the only thing that reads it; without it
+      # that page reports no_api_key and everything else is unaffected.
+      - key: MISTRAL_API_KEY
+        sync: false

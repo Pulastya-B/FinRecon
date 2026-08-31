@@ -1536,3 +1536,45 @@ invariants, firewall, agent guardrails and validate (both seeds) all pass. All
 answer. Browser probe: six pages render, the note appears on seed 99 only and
 survives a run, the TIMING_PENDING finding shows in the queue, no uncaught JS
 errors. Screenshot at docs/screenshots/run_seed99.png.
+
+## [2026-08-31 deploy-render] mistralai was imported but never declared as a dependency
+Observed: Vercel deployment failed. Investigating hosting surfaced a latent
+defect unrelated to the platform: service/qa.py imports mistralai (line 1240)
+and finrecon/explain.py imports it (line 115), but it was absent from
+requirements.txt. Both imports are lazy, so the app boots and five of six pages
+work -- but qa._client() does `from mistralai import Mistral` unguarded once it
+finds a key, and /api/ask/{seed}/suggested calls _client() on Ask-page load.
+Expected: a deployment with MISTRAL_API_KEY set serves the Ask page.
+Actual, had it shipped: HTTP 500 on the request that renders the Ask page,
+in the one configuration where the agent is supposed to work. Invisible locally
+because the package is installed in the dev environment.
+Investigated: measured what the serving path actually needs before choosing a
+host -- peak RSS 114.9 MB with all five seeds cached (Render free tier is
+512 MB); no runtime disk writes on the request path; web/dist committed so no
+Node build; frontend calls are relative so no CORS; largest tracked file 628 KB.
+Root cause: the dependency was added to the dev environment and used in code,
+but requirements.txt was never updated. Nothing tested the absent-package path.
+Change made:
+  requirements.txt      mistralai>=1.10 added
+  service/app.py        suggested() catches a provider construction failure and
+                        degrades to key_present=False, the state the UI already
+                        renders plainly, instead of 500ing the page
+  render.yaml           new -- Blueprint; --host 0.0.0.0 and --port $PORT are
+                        load-bearing (uvicorn defaults to 127.0.0.1, which
+                        Render cannot route to), MISTRAL_API_KEY sync:false
+  .github/workflows/keepalive.yml  new -- pings /api/health every 10 min so the
+                        free instance does not sleep during judging
+  README.md             Deploy section, cold-start warning
+Not changed: no engine code, no threshold, no published number.
+Verification: wrote a control that blocks the mistralai import with a patched
+__import__ and asserts BOTH directions -- qa._client() raises ImportError
+without the guard (so the control is not inert), and suggested() returns
+key_present=False with it. Both confirmed. With the real key the endpoint still
+returns 200 / key_present=True, so the working path is unchanged. Server
+restarted bound to 0.0.0.0 with the port taken from $PORT, exactly as Render
+runs it: health green, seed-99 browser probe ALL PASS. invariants, firewall,
+agent guardrails and validate (both seeds) all pass.
+Note: the first attempt to start that server failed silently -- $env:PORT was
+interpolated in the parent shell where it was unset, so uvicorn received an
+empty --port and never bound. Nothing was listening and the health check simply
+could not connect.

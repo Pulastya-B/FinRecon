@@ -55,6 +55,20 @@ opening the URL on a day nobody is watching gets a working app.
 `MISTRAL_API_KEY` is optional. Without it, everything works except the Ask page,
 which says so plainly.
 
+### Deployed
+
+Hosted on Render, declared in [`render.yaml`](render.yaml) — connect the repo as
+a Blueprint and it deploys as-is. `MISTRAL_API_KEY` is set as a dashboard secret,
+so the Ask agent is live.
+
+> **First load may take up to a minute.** The free instance sleeps after 15
+> minutes idle and has to wake. Every request after that is instant.
+
+It is hosted as a single long-lived process rather than on serverless, and that
+is a requirement rather than a preference: the per-seed run cache and the
+operator audit log live in memory, so on ephemeral functions recorded decisions
+would stop persisting and the queue burn-down would quietly stop working.
+
 ### Verification
 
 ```bash
