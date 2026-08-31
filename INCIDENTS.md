@@ -1578,3 +1578,44 @@ Note: the first attempt to start that server failed silently -- $env:PORT was
 interpolated in the parent shell where it was unset, so uvicorn received an
 empty --port and never bound. Nothing was listening and the health check simply
 could not connect.
+
+## [2026-08-31 mistralai-major] deployed Ask page said "No API key configured" while the key was set
+Observed: https://finrecon.onrender.com served every page correctly, but the Ask
+page showed "No API key configured" although MISTRAL_API_KEY was set in Render's
+Environment tab. /api/ask/seed42/suggested returned key_present=false.
+Expected: key_present=true and a working agent.
+Investigated, in order:
+  - Confirmed the key is not leaked anywhere (separate audit): .env never
+    tracked, 0 commits touching it, 0 blobs in the object database containing
+    the value, 0 tracked files, not inlined in web/dist (no VITE_ prefix).
+  - POSTed a question to /api/ask/seed42 to discriminate "no key" from "import
+    failed". Response: provider_failed,
+    "ImportError: cannot import name 'Mistral' from 'mistralai' (unknown
+    location)". "(unknown location)" means a NAMESPACE package -- the directory
+    exists with no __init__.py -- so the key was never the problem.
+  - Compared versions: dev has mistralai 1.10.0; PyPI latest is 2.9.4.
+  - Downloaded the 2.9.4 wheel and listed it: it ships mistralai/client,
+    mistralai/azure, mistralai/gcp, mistralai/extra and NO mistralai/__init__.py.
+Root cause: the requirement was written ">=1.10" with no upper bound in the
+previous commit. Dev already had 1.10.0 so nothing changed locally, while a
+fresh install on the server resolved the 2.x major, which restructured the
+package. Self-inflicted by the fix for the previous incident.
+Second defect, also self-inflicted and worse: that same commit added a bare
+`except Exception: key_present = False` around _client(), which collapsed a
+broken SDK into the no-key state. The UI then reported "No API key configured"
+for a deployment whose key was correct, pointing the reader at the one thing
+that was fine. A wrong diagnosis is worse than no diagnosis.
+Change made:
+  requirements.txt   mistralai>=1.10,<2  -- the upper bound is the fix
+  service/app.py     suggested() returns provider_error alongside key_present
+  web/src/Ask.jsx    separate banner for a provider failure, showing the real
+                     error; the no-key banner no longer fires for it
+Verification: three-state control over suggested() -- (A) working SDK + key ->
+key_present=true, provider_error=None; (B) mistralai import blocked + key ->
+key_present=false with the ImportError reported; (C) no key, load_dotenv
+neutralised -> key_present=false and provider_error=None, i.e. it does not
+invent a provider fault. All three pass. Note C initially failed for a harness
+reason, not a code one: _client() calls load_dotenv(), which re-read the real
+.env and restored the key that the test had just removed.
+invariants, firewall, agent guardrails, validate (both seeds) and the seed-99
+browser probe all pass. No engine code, threshold or published number touched.

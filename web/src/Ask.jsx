@@ -155,7 +155,11 @@ export default function Ask({ seed, onOpenTrace, subject, onClearSubject }) {
     }
   }
 
-  const noKey = meta && meta.key_present === false
+  // Two different failures, told apart. A provider error means the key is fine
+  // and the SDK is not -- saying "no API key" there points the reader at the
+  // one thing that is working.
+  const providerError = meta?.provider_error || null
+  const noKey = meta && meta.key_present === false && !providerError
 
   return (
     <div className="flex min-h-0 flex-1 flex-col px-gutter pb-gutter pt-6">
@@ -182,6 +186,19 @@ export default function Ask({ seed, onOpenTrace, subject, onClearSubject }) {
             <span className="font-mono text-[12px]">MISTRAL_API_KEY</span>, or
             put it in a <span className="font-mono text-[12px]">.env</span> file.
             The rest of the app runs without it.
+          </div>
+        )}
+
+        {providerError && (
+          <div className="mb-4 rounded-lg border border-danger/30 bg-danger/[0.06] px-4 py-3 text-body-sm leading-relaxed text-n-700">
+            <span className="font-semibold">
+              The model provider could not be loaded.
+            </span>{' '}
+            The API key is set — this is a problem with the client library, not
+            your configuration. The rest of the app is unaffected.
+            <div className="mt-2 break-words font-mono text-[11.5px] text-danger">
+              {providerError}
+            </div>
           </div>
         )}
 

@@ -8,4 +8,10 @@ uvicorn[standard]>=0.30
 # finrecon/explain.py, so the engine, the queue and the Evidence page all work
 # with this absent -- but it was absent from THIS FILE while being imported,
 # which meant a deployment with MISTRAL_API_KEY set would 500 the Ask page.
-mistralai>=1.10
+#
+# The <2 is load-bearing, not caution. This shipped as ">=1.10", dev had 1.10.0,
+# and the first deploy resolved 2.9.4 -- which drops mistralai/__init__.py and
+# turns the package into a namespace over client/ azure/ gcp/. So
+# `from mistralai import Mistral` failed with "cannot import name 'Mistral'
+# from 'mistralai' (unknown location)" on the server while working locally.
+mistralai>=1.10,<2

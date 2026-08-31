@@ -291,17 +291,25 @@ def ask(seed: str, body: Question):
 @app.get("/api/ask/{seed}/suggested")
 def suggested(seed: str):
     # _client() constructs the provider, so a missing or broken SDK raises here
-    # -- on the request that renders the Ask page. Degrade to the no-key state,
-    # which the UI already reports plainly, rather than 500ing the whole page
-    # over a dependency problem the other five pages do not care about.
+    # -- on the request that renders the Ask page. Don't 500 the page over a
+    # dependency problem the other five pages do not care about.
+    #
+    # But report WHICH failure it is. An earlier version collapsed both into
+    # key_present=False, so a broken SDK displayed as "No API key configured":
+    # the deployment had the key set correctly and the banner sent the reader
+    # to look at the one thing that was fine. A wrong diagnosis is worse than
+    # no diagnosis.
+    provider_error = None
     try:
         key_present = qa._client() is not None
-    except Exception:
+    except Exception as exc:
         key_present = False
+        provider_error = f"{type(exc).__name__}: {exc}"
     return {"questions": qa.SUGGESTED,
             "questions_for_subject": qa.SUGGESTED_FOR_SUBJECT,
             "model": qa.MODEL,
-            "key_present": key_present}
+            "key_present": key_present,
+            "provider_error": provider_error}
 
 
 # --------------------------------------------------------------------------
