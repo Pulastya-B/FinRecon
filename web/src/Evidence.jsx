@@ -66,22 +66,36 @@ function CrossSeed({ data, heldOut }) {
   return (
     <>
       {/*
-        The headline is a standard deviation of zero, and it is the only
-        figure on this page that deserves display size. Thirty datasets the
-        engine had never seen, and the number that matters did not move.
+        The headline is the precision itself, not its standard deviation.
+
+        It used to be the spread -- a display-size "0.00" under a label opening
+        with the word "Precision", which reads at a glance as precision of
+        zero. The strongest number on the page was the one most likely to be
+        taken as a catastrophic one. The spread is still stated, in the line
+        below where it cannot be misread as the metric.
+
+        It was also a hardcoded "0.00" rather than the measured value, so a
+        precision that started moving across seeds would have gone on claiming
+        it had not. It now reads from the data like every other figure here.
       */}
       <div data-tour="ev-headline" className="mb-4 grid grid-cols-3 gap-3">
         <div
           className="panel px-5 py-4 ring-1 ring-inset ring-accent/25"
           style={{ background: 'var(--accent-bg)' }}
         >
-          <div className="tnum text-display text-accent">0.00</div>
+          <div className="tnum text-display text-accent">
+            {pct(precision.min)}
+          </div>
           <div className="mt-1.5 text-label uppercase text-n-600">
-            Precision · standard deviation
+            Precision · every seed
           </div>
           <div className="mt-1.5 text-body-sm leading-relaxed text-n-600">
-            {pct(precision.min)} on every one of the {data.seeds} seeds. Not a
-            mean of near-misses — the same number {data.seeds} times.
+            The same number on all {data.seeds}, not a mean of near-misses —
+            standard deviation{' '}
+            <span className="font-semibold text-n-800">
+              {precision.sd.toFixed(2)}
+            </span>
+            .
           </div>
         </div>
         <div className="panel px-5 py-4">

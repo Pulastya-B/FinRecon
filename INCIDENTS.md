@@ -1657,3 +1657,30 @@ command now published on the page -- identical, 30 rows, and the subset landed
 in its own file scoring 47.30%/100.00%. Six phrases asserted present on the
 rendered page, no JS errors. invariants, firewall, agent guardrails, validate
 on both seeds and the seed-99 browser probe all pass.
+
+## [2026-09-02 precision-card] Evidence headline read as "precision 0.00"
+Observed: the first card on the Evidence page showed a display-size "0.00" above
+the label "PRECISION · STANDARD DEVIATION". At a glance the strongest figure on
+the page reads as precision of zero.
+Expected: the card should state the claim it is making.
+Root cause: the card led with the spread rather than the metric. The supporting
+line did say "100.00% on every one of the 30 seeds", but the eye takes the
+display-size number and the first word of the label, which paired to
+"Precision 0.00".
+Second defect found while fixing it: the "0.00" was a HARDCODED string, not
+precision.sd from the report. Every other figure in this component reads from
+data. Had precision started varying across seeds, the card would have gone on
+asserting a standard deviation of zero -- a false claim on the page whose whole
+purpose is to be checkable.
+Change made: web/src/Evidence.jsx only. The card now leads with
+pct(precision.min) -- 100.00% -- under the label "Precision · every seed", and
+states "standard deviation {precision.sd.toFixed(2)}" in the line below, read
+from the data. No other card, number or copy touched; report.json not rebuilt.
+Verification: rendered card inspected as an image, not just asserted -- reads
+"100.00% / PRECISION · EVERY SEED / The same number on all 30, not a mean of
+near-misses -- standard deviation 0.00." Tour step 1 still targets
+[data-tour="ev-headline"] and its wording ("a standard deviation of 0.00") still
+matches. invariants, firewall, agent guardrails and validate on both seeds pass.
+Note: the first attempt to check the tour failed because the Run page tour's
+scrim intercepted the nav click. That is the documented reason ?tour=off exists;
+the probe was wrong, not the page.
