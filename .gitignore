@@ -28,3 +28,8 @@ data/_determinism_check/
 #                         API calls -- no quota burn, no rate limit mid-review
 #   data/seed42/          the development dataset is the artefact
 #   data/seed99/          the held-out dataset must ship to be checkable
+
+# Subset sweep results. A judge reproducing one row of the published thirty
+# writes one of these; the canonical eval/sweep_results.csv is the committed
+# evidence and stays tracked.
+eval/sweep_results_*.csv

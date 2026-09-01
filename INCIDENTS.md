@@ -1619,3 +1619,41 @@ reason, not a code one: _client() calls load_dotenv(), which re-read the real
 .env and restored the key that the test had just removed.
 invariants, firewall, agent guardrails, validate (both seeds) and the seed-99
 browser probe all pass. No engine code, threshold or published number touched.
+
+## [2026-08-31 thirty-vs-five] Evidence page claims 30 seeds while the app offers 5
+Observed: reader concluded "the seed names are completely wrong" -- the Evidence
+page reports seeds 200-229, but data/ contains only seed7, seed13, seed21,
+seed42, seed99 and the Run dropdown offers those five.
+Expected: a reader should be able to reconcile the two numbers without guessing.
+Investigated: checked whether the names were actually wrong before changing
+anything. eval/sweep_results.csv holds 30 rows, seeds 200-229. Each reported
+worst_seed matches the true minimum in that CSV (coverage 47.30% on 205,
+exception accuracy 68.57% on 218, attribution 77.78% on 206). The per-seed
+tolerance table's labels match their real coverage and match counts on all four
+dev seeds. eval/sweep.py generates each seed into a temp dir, scores it, and
+deletes it (lines 178, 238, 454), which is why nothing lands in data/.
+Root cause: NOT a data error. The page was correct and unexplained. It said the
+thirty were "generated fresh" but never said they are not kept and not the five
+in the dropdown, so the gap read as an inflated claim.
+Proof the seeds are real: regenerated seed 205 from scratch -- coverage 47.30%,
+precision 100.00%, identical to the published row. The generator is
+deterministic, so the seed number is the dataset.
+Second defect, found by doing that: eval/sweep.py's --out defaulted to the
+canonical eval/sweep_results.csv, so `--seeds 205 205` overwrote the committed
+thirty-seed evidence with a single row. It happened during this investigation;
+restored with git checkout. The Evidence page now publishes that command for
+judges to run, which would have made it a trap.
+Change made:
+  web/src/Evidence.jsx  paragraph stating the thirty are built, scored and
+                        deleted, are not the five in data/, and how to rebuild
+                        any row
+  eval/sweep.py         --out defaults to None; the canonical file is written
+                        only for a full 200-229 sweep, a subset writes
+                        sweep_results_FIRST-LAST.csv
+  .gitignore            eval/sweep_results_*.csv
+No number, threshold or engine rule changed; report.json not rebuilt.
+Verification: md5 of eval/sweep_results.csv before and after running the exact
+command now published on the page -- identical, 30 rows, and the subset landed
+in its own file scoring 47.30%/100.00%. Six phrases asserted present on the
+rendered page, no JS errors. invariants, firewall, agent guardrails, validate
+on both seeds and the seed-99 browser probe all pass.

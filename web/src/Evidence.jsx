@@ -174,6 +174,36 @@ function CrossSeed({ data, heldOut }) {
         Nothing was dropped for looking bad.
       </p>
 
+      {/*
+        Why thirty here and five in the Run dropdown.
+
+        Without this the page looks like it is claiming more than it can show:
+        data/ holds five datasets, this section says thirty, and a reader who
+        checks is left to assume the difference is invented. It is the opposite
+        -- the thirty are not kept precisely because keeping them would prove
+        nothing that the seed number does not already prove.
+      */}
+      <p className="mt-3 max-w-[76ch] text-body-sm leading-relaxed text-n-500">
+        <span className="font-semibold text-n-800">
+          These thirty are not the datasets in the Run dropdown.
+        </span>{' '}
+        {`data/`} holds five committed datasets — four for development and the
+        held-out one. Seeds {data.seed_from}–{data.seed_to} are built by{' '}
+        <span className="font-mono text-[12px]">eval/sweep.py</span> one at a
+        time, run end to end, scored against their own ground truth, and then
+        deleted; only the row of results survives, in{' '}
+        <span className="font-mono text-[12px]">{data.source}</span>. The
+        generator is deterministic, so the seed number <em>is</em> the dataset
+        and storing {data.seeds} copies of it would add nothing. Rebuild any row
+        and check it:{' '}
+        <span className="font-mono text-[12px]">
+          python eval/sweep.py --seeds {data.metrics[0].worst_seed}{' '}
+          {data.metrics[0].worst_seed}
+        </span>{' '}
+        regenerates the worst seed and scores it at{' '}
+        {pct(data.metrics[0].min)} coverage again.
+      </p>
+
       {/* ------------------------------------------------------------------
         The held-out slot.
 

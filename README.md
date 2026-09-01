@@ -1,4 +1,4 @@
-# finrecon — an AI finance controller
+# Finrecon — an AI finance controller
 
 Three-way reconciliation across merchant orders, a payment gateway and a bank
 statement, with a measured accuracy claim, an honest exception queue, a cash

@@ -69,6 +69,10 @@ DAYS = 45
 # well the engine fits data it was tuned on, which is the opposite of the point.
 EXCLUDED_SEEDS = frozenset({7, 13, 21, 42, 99})
 
+# The published range. Only a sweep over exactly this range may write the
+# canonical results file, because that file is the committed evidence.
+DEFAULT_SEEDS = [200, 229]
+
 ALL_LEVELS = ("L0", "L1", "L2", "L3", "L4", "L5")
 ALL_BANDS = (STRONG, CIRCUMSTANTIAL, REFUSE)
 
@@ -407,9 +411,16 @@ def write_csv(results: list[SeedResult], path: Path) -> None:
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Breadth sweep across unseen seeds.")
-    ap.add_argument("--seeds", type=int, nargs=2, default=[200, 229],
+    ap.add_argument("--seeds", type=int, nargs=2, default=list(DEFAULT_SEEDS),
                     metavar=("FIRST", "LAST"))
-    ap.add_argument("--out", default=str(ROOT / "eval/sweep_results.csv"))
+    # Default deliberately None rather than the canonical path. A partial run
+    # used to overwrite eval/sweep_results.csv with however few seeds it ran --
+    # and that file is the committed thirty-seed evidence the Evidence page
+    # reads. Running `--seeds 205 205` to check one row silently replaced all
+    # thirty with one. It happened. A subset now writes beside it instead.
+    ap.add_argument("--out", default=None,
+                    help="results CSV (default: the canonical file for a full "
+                         "sweep, sweep_results_FIRST-LAST.csv for a subset)")
     ap.add_argument("--keep-dir", default=None,
                     help="where failing datasets are kept (default: a temp dir)")
     args = ap.parse_args(argv)
@@ -441,8 +452,14 @@ def main(argv: list[str] | None = None) -> int:
         print(f"  seed {seed}  {flag:<6} {row.seconds:5.1f}s")
 
     print(format_report(results))
-    write_csv(results, Path(args.out))
-    print(f"\nraw results -> {args.out}")
+    if args.out:
+        out_path = Path(args.out)
+    elif [args.seeds[0], args.seeds[1]] == DEFAULT_SEEDS:
+        out_path = ROOT / "eval/sweep_results.csv"
+    else:
+        out_path = ROOT / f"eval/sweep_results_{args.seeds[0]}-{args.seeds[1]}.csv"
+    write_csv(results, out_path)
+    print(f"\nraw results -> {out_path}")
 
     kept = [r for r in results if r.kept_path]
     if kept:
